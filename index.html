@@ -1,29 +1,822 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MeR Seminovos</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="style.css"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MeR Seminovos CRM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#090909;
+      --bg2:#111;
+      --bg3:#171717;
+      --bg4:#1f1f1f;
+      --brd:#2a2a2a;
+      --txt:#f2f2f2;
+      --muted:#757575;
+      --sub:#9a9a9a;
+      --ac:#ffb300;
+      --ac2:#ff7a18;
+      --ok:#22c55e;
+      --warn:#f59e0b;
+      --err:#ef4444;
+      --shadow:0 12px 32px rgba(0,0,0,.45);
+      --r:14px;
+      --r2:10px;
+      --sw:250px;
+      font-family:'Inter',sans-serif;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--txt);
+      display:flex;
+      overflow:hidden;
+    }
+
+    button,input,select,textarea{
+      font:inherit;
+      outline:none;
+    }
+
+    button{
+      cursor:pointer;
+    }
+
+    #sidebar{
+      width:var(--sw);
+      background:var(--bg2);
+      border-right:1px solid var(--brd);
+      display:flex;
+      flex-direction:column;
+      transition:width .25s ease;
+      flex-shrink:0;
+      overflow:hidden;
+    }
+    #sidebar.collapsed{width:64px}
+    #sidebar.collapsed .sb-brand,
+    #sidebar.collapsed .nb span,
+    #sidebar.collapsed .sb-label,
+    #sidebar.collapsed .ab span,
+    #sidebar.collapsed .sb-footer span,
+    #sidebar.collapsed .sb-footer small{
+      opacity:0;
+      width:0;
+      overflow:hidden;
+      white-space:nowrap;
+    }
+
+    .sb-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:18px 14px;
+      border-bottom:1px solid var(--brd);
+    }
+    .sb-logo{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      color:var(--ac);
+      min-width:0;
+    }
+    .sb-brand{
+      display:flex;
+      flex-direction:column;
+      line-height:1.1;
+      transition:opacity .2s,width .2s;
+      white-space:nowrap;
+    }
+    .sb-brand .name{
+      font-family:'Montserrat',sans-serif;
+      font-weight:900;
+      font-size:17px;
+      color:var(--ac);
+    }
+    .sb-brand .sub{
+      font-size:9px;
+      font-weight:800;
+      color:var(--ac2);
+      text-transform:uppercase;
+      letter-spacing:1.6px;
+    }
+    #btnToggle{
+      width:28px;
+      height:28px;
+      border-radius:8px;
+      border:1px solid var(--brd);
+      background:var(--bg3);
+      color:var(--sub);
+      font-size:18px;
+      line-height:1;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      transition:.2s;
+      flex-shrink:0;
+    }
+    #btnToggle:hover{border-color:var(--ac);color:var(--ac)}
+
+    .sb-nav{
+      padding:12px 10px;
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      flex:1;
+    }
+    .nb{
+      display:flex;
+      align-items:center;
+      gap:11px;
+      padding:11px 12px;
+      border:none;
+      background:transparent;
+      color:var(--muted);
+      border-radius:10px;
+      text-align:left;
+      transition:.2s;
+      white-space:nowrap;
+      width:100%;
+    }
+    .nb:hover{background:var(--bg3);color:var(--txt)}
+    .nb.active{background:rgba(255,179,0,.10);color:var(--ac)}
+    .nb span{transition:opacity .2s,width .2s}
+
+    .sb-actions{
+      border-top:1px solid var(--brd);
+      padding:10px;
+      display:flex;
+      flex-direction:column;
+      gap:5px;
+    }
+    .sb-label{
+      color:var(--muted);
+      font-size:10px;
+      letter-spacing:1px;
+      text-transform:uppercase;
+      padding:3px 4px 4px;
+      transition:opacity .2s,width .2s;
+      white-space:nowrap;
+    }
+    .ab{
+      display:flex;
+      align-items:center;
+      gap:9px;
+      width:100%;
+      padding:10px 11px;
+      background:var(--bg3);
+      border:1px solid var(--brd);
+      color:var(--sub);
+      border-radius:10px;
+      transition:.2s;
+      white-space:nowrap;
+    }
+    .ab:hover{border-color:var(--ac);color:var(--ac)}
+    .ab span{transition:opacity .2s,width .2s}
+
+    .sb-footer{
+      border-top:1px solid var(--brd);
+      padding:14px;
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+    }
+    .sb-footer span{
+      font-family:'Montserrat',sans-serif;
+      color:var(--ac);
+      font-weight:800;
+      font-size:12px;
+      transition:opacity .2s;
+      white-space:nowrap;
+    }
+    .sb-footer small{
+      color:var(--muted);
+      font-size:10px;
+      transition:opacity .2s;
+      white-space:nowrap;
+    }
+
+    #main{
+      flex:1;
+      min-width:0;
+      display:flex;
+      flex-direction:column;
+      overflow:hidden;
+    }
+
+    #topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      padding:18px 20px;
+      border-bottom:1px solid var(--brd);
+      background:linear-gradient(180deg,#0f0f0f,#0b0b0b);
+      flex-shrink:0;
+    }
+    #pageTitle{
+      margin:0;
+      font-family:'Montserrat',sans-serif;
+      font-size:28px;
+      font-weight:900;
+      letter-spacing:-.5px;
+    }
+    #topbar-right{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:0;
+    }
+
+    .search-box{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 12px;
+      background:var(--bg3);
+      border:1px solid var(--brd);
+      border-radius:12px;
+      min-width:320px;
+    }
+    .search-box input{
+      background:transparent;
+      border:none;
+      color:var(--txt);
+      width:100%;
+    }
+    .search-box input::placeholder{color:#666}
+
+    .btn-ac,.btn-ghost,.tv{
+      border:none;
+      border-radius:12px;
+      padding:10px 14px;
+      font-weight:700;
+      transition:.2s;
+    }
+    .btn-ac{
+      background:linear-gradient(135deg,var(--ac),var(--ac2));
+      color:#111;
+      box-shadow:0 8px 20px rgba(255,122,24,.12);
+    }
+    .btn-ac:hover{filter:brightness(1.05)}
+    .btn-ghost{
+      background:var(--bg3);
+      color:var(--txt);
+      border:1px solid var(--brd);
+    }
+    .btn-ghost:hover{border-color:var(--ac);color:var(--ac)}
+    .tv{
+      width:42px;
+      height:42px;
+      background:var(--bg3);
+      border:1px solid var(--brd);
+      color:var(--sub);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:0;
+    }
+    .tv.active{background:rgba(255,179,0,.10);color:var(--ac);border-color:rgba(255,179,0,.3)}
+
+    .view{
+      display:none;
+      flex:1;
+      overflow:auto;
+      padding:18px 20px 24px;
+    }
+    .view.active{display:block}
+
+    .stats-grid{
+      display:grid;
+      grid-template-columns:repeat(5,minmax(0,1fr));
+      gap:14px;
+      margin-bottom:18px;
+    }
+    .stat-card{
+      background:var(--bg2);
+      border:1px solid var(--brd);
+      border-radius:var(--r);
+      padding:16px;
+      box-shadow:var(--shadow);
+      border-top:3px solid transparent;
+      animation:fadeIn .25s ease;
+    }
+    .stat-val{
+      font-size:30px;
+      font-weight:900;
+      line-height:1;
+      margin-bottom:8px;
+    }
+    .stat-label{
+      color:var(--sub);
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.6px;
+      font-weight:700;
+    }
+
+    .dash-cols{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+    }
+    .card{
+      background:var(--bg2);
+      border:1px solid var(--brd);
+      border-radius:var(--r);
+      padding:16px;
+      box-shadow:var(--shadow);
+      min-height:240px;
+    }
+    .card-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:12px;
+      font-weight:800;
+      font-family:'Montserrat',sans-serif;
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:1px;
+      color:var(--ac);
+    }
+    .badge{
+      background:rgba(255,179,0,.12);
+      color:var(--ac);
+      border:1px solid rgba(255,179,0,.2);
+      padding:4px 8px;
+      border-radius:999px;
+      font-size:11px;
+      font-family:'Inter',sans-serif;
+      font-weight:800;
+    }
+
+    .ai{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 0;
+      border-bottom:1px solid var(--brd);
+      cursor:pointer;
+    }
+    .ai:last-child{border-bottom:none}
+    .ai-dot{
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      flex-shrink:0;
+    }
+    .ai-icon{
+      width:34px;
+      height:34px;
+      border-radius:9px;
+      background:rgba(255,179,0,.10);
+      border:1px solid rgba(255,179,0,.18);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:var(--ac);
+      flex-shrink:0;
+    }
+    .ai-info{min-width:0;flex:1}
+    .ai-info strong,.ai-info small{display:block}
+    .ai-info strong{font-size:13px}
+    .ai-info small{font-size:11px;color:var(--muted);margin-top:2px}
+    .ai-tag,.status{
+      font-size:11px;
+      border-radius:999px;
+      padding:5px 8px;
+      font-weight:800;
+      flex-shrink:0;
+    }
+    .status.s-Regular{background:rgba(34,197,94,.10);color:var(--ok)}
+    .status.s-Pendente{background:rgba(245,158,11,.10);color:var(--warn)}
+    .status.s-Vencido{background:rgba(239,68,68,.10);color:var(--err)}
+
+    .toolbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:14px;
+      flex-wrap:wrap;
+    }
+    .filtros{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    select,input,textarea{
+      background:var(--bg3);
+      border:1px solid var(--brd);
+      color:var(--txt);
+      border-radius:12px;
+      padding:10px 12px;
+    }
+    select{min-width:160px}
+
+    .toggle-view{display:flex;gap:8px}
+
+    .grade{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:14px;
+    }
+    .grade.lista{
+      grid-template-columns:1fr;
+    }
+
+    .vc{
+      background:var(--bg2);
+      border:1px solid var(--brd);
+      border-radius:var(--r);
+      padding:16px;
+      box-shadow:var(--shadow);
+      cursor:pointer;
+      transition:.2s;
+      animation:fadeIn .25s ease;
+    }
+    .vc:hover{transform:translateY(-1px);border-color:rgba(255,179,0,.25)}
+    .vc-top{
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      margin-bottom:12px;
+    }
+    .vc-icon{
+      width:40px;
+      height:40px;
+      border-radius:12px;
+      background:rgba(255,179,0,.10);
+      border:1px solid rgba(255,179,0,.18);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:var(--ac);
+      flex-shrink:0;
+    }
+    .vc-nome{
+      font-family:'Montserrat',sans-serif;
+      font-size:15px;
+      font-weight:800;
+      margin-bottom:4px;
+    }
+    .vc-placa{
+      color:var(--ac2);
+      font-weight:800;
+      font-size:13px;
+    }
+    .vc-meta{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      color:var(--sub);
+      font-size:12px;
+      line-height:1.35;
+      margin-bottom:14px;
+    }
+    .vc-meta strong{color:var(--txt)}
+    .vc-foot{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+    }
+    .vc-acoes{
+      display:flex;
+      gap:8px;
+    }
+    .btn-sm{
+      width:34px;
+      height:34px;
+      border-radius:10px;
+      border:1px solid var(--brd);
+      background:var(--bg3);
+      color:var(--txt);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      transition:.2s;
+    }
+    .btn-sm:hover{border-color:var(--ac);color:var(--ac)}
+
+    .venc-row{
+      display:grid;
+      grid-template-columns:1.4fr .7fr .8fr .7fr;
+      gap:12px;
+      align-items:center;
+      padding:14px;
+      margin-bottom:10px;
+      background:var(--bg2);
+      border:1px solid var(--brd);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      cursor:pointer;
+      animation:fadeIn .25s ease;
+    }
+    .venc-nome{font-weight:800}
+    .venc-sub{font-size:12px;color:var(--muted);margin-top:3px}
+    .venc-tipo,.venc-data,.venc-dias{font-weight:800;font-size:12px}
+
+    .doc-vehicle{
+      background:var(--bg2);
+      border:1px solid var(--brd);
+      border-radius:var(--r);
+      padding:16px;
+      margin-bottom:12px;
+      box-shadow:var(--shadow);
+    }
+    .doc-vehicle-head{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+      margin-bottom:12px;
+    }
+    .doc-vehicle-head strong{font-size:14px}
+    .doc-list{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+    .doc-item{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:10px;
+      border:1px solid var(--brd);
+      border-radius:12px;
+      background:var(--bg3);
+    }
+    .doc-icon{
+      width:32px;
+      height:32px;
+      border-radius:10px;
+      background:rgba(255,179,0,.10);
+      border:1px solid rgba(255,179,0,.18);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:var(--ac);
+      flex-shrink:0;
+    }
+    .doc-info{flex:1;min-width:0}
+    .doc-info strong,.doc-info small{display:block}
+    .doc-info strong{font-size:13px}
+    .doc-info small{font-size:11px;color:var(--muted);margin-top:2px}
+    .doc-actions{display:flex;gap:8px;flex-shrink:0}
+
+    .overlay{
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.72);
+      z-index:50;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    }
+    .overlay.active{display:flex}
+    .modal{
+      width:min(980px,100%);
+      max-height:92vh;
+      overflow:auto;
+      background:var(--bg2);
+      border:1px solid var(--brd);
+      border-radius:18px;
+      box-shadow:var(--shadow);
+    }
+    .modal-lg{width:min(1180px,100%)}
+    .modal-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:16px 18px;
+      border-bottom:1px solid var(--brd);
+      position:sticky;
+      top:0;
+      background:linear-gradient(180deg,#111,#101010);
+      z-index:2;
+    }
+    .modal-head h2{
+      margin:0;
+      font-family:'Montserrat',sans-serif;
+      font-size:18px;
+      font-weight:900;
+    }
+    .btn-x{
+      width:34px;height:34px;
+      border-radius:10px;
+      border:1px solid var(--brd);
+      background:var(--bg3);
+      color:var(--txt);
+    }
+    .modal-body{
+      padding:18px;
+    }
+    .fsec{
+      margin-bottom:18px;
+    }
+    .fsec-title{
+      font-family:'Montserrat',sans-serif;
+      font-size:11px;
+      color:var(--ac);
+      text-transform:uppercase;
+      letter-spacing:1px;
+      font-weight:900;
+      margin-bottom:12px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .fsec-title::after{
+      content:'';
+      height:1px;
+      background:var(--brd);
+      flex:1;
+    }
+    .fgrid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+    }
+    .fg{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    .fg label{
+      font-size:11px;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.7px;
+      font-weight:700;
+    }
+    .fg input,.fg select,.fg textarea{
+      width:100%;
+      padding:10px 12px;
+      border-radius:12px;
+      background:var(--bg3);
+      border:1px solid var(--brd);
+      color:var(--txt);
+    }
+    .fg textarea{resize:vertical}
+    .modal-foot{
+      display:flex;
+      justify-content:flex-end;
+      gap:10px;
+      padding-top:10px;
+      border-top:1px solid var(--brd);
+    }
+
+    .detail-grid{
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:14px;
+    }
+    .det-card{
+      background:var(--bg3);
+      border:1px solid var(--brd);
+      border-radius:16px;
+      padding:16px;
+      margin-bottom:14px;
+    }
+    .det-title{
+      font-family:'Montserrat',sans-serif;
+      font-size:11px;
+      font-weight:900;
+      color:var(--ac);
+      text-transform:uppercase;
+      letter-spacing:1px;
+      margin-bottom:12px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .det-info{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:10px;
+    }
+    .info{
+      background:var(--bg2);
+      border:1px solid var(--brd);
+      border-radius:12px;
+      padding:10px;
+    }
+    .info label{
+      display:block;
+      font-size:10px;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.7px;
+      font-weight:700;
+      margin-bottom:4px;
+    }
+    .info span{
+      font-size:13px;
+      font-weight:700;
+    }
+
+    .upload-row{
+      display:grid;
+      grid-template-columns:1fr 1fr 120px;
+      gap:10px;
+      margin-bottom:12px;
+    }
+
+    #toasts{
+      position:fixed;
+      right:20px;
+      bottom:20px;
+      z-index:100;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+    .toast{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:260px;
+      padding:13px 15px;
+      border-radius:12px;
+      background:var(--bg2);
+      border:1px solid var(--brd);
+      box-shadow:var(--shadow);
+      animation:fadeIn .2s ease;
+      font-size:13px;
+      font-weight:700;
+    }
+    .toast.ok{border-color:rgba(34,197,94,.35)}
+    .toast.warn{border-color:rgba(245,158,11,.35)}
+    .toast.err{border-color:rgba(239,68,68,.35)}
+    .dot{width:9px;height:9px;border-radius:50%}
+    .ok .dot{background:var(--ok)}
+    .warn .dot{background:var(--warn)}
+    .err .dot{background:var(--err)}
+
+    .empty{
+      text-align:center;
+      padding:56px 18px;
+      color:var(--muted);
+    }
+    .empty h3{
+      font-family:'Montserrat',sans-serif;
+      color:var(--txt);
+      margin:10px 0 6px;
+    }
+
+    @keyframes fadeIn{
+      from{opacity:0;transform:translateY(6px)}
+      to{opacity:1;transform:translateY(0)}
+    }
+
+    ::-webkit-scrollbar{width:8px;height:8px}
+    ::-webkit-scrollbar-track{background:transparent}
+    ::-webkit-scrollbar-thumb{background:#2d2d2d;border-radius:8px}
+    ::-webkit-scrollbar-thumb:hover{background:var(--ac)}
+
+    @media (max-width: 1100px){
+      .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .dash-cols{grid-template-columns:1fr}
+      .grade{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .detail-grid{grid-template-columns:1fr}
+    }
+    @media (max-width: 800px){
+      #topbar{flex-direction:column;align-items:stretch}
+      #topbar-right{flex-direction:column;align-items:stretch}
+      .search-box{min-width:0;width:100%}
+      .stats-grid{grid-template-columns:1fr}
+      .grade{grid-template-columns:1fr}
+      .fgrid{grid-template-columns:1fr}
+      .upload-row{grid-template-columns:1fr}
+      .venc-row{grid-template-columns:1fr 1fr}
+    }
+  </style>
 </head>
 <body>
 
   <aside id="sidebar">
     <div class="sb-header">
       <div class="sb-logo">
-        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
           <path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3"/>
           <rect x="9" y="11" width="14" height="10" rx="2"/>
           <circle cx="12" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
         </svg>
         <div class="sb-brand">
-          <span class="sb-nome">MeR</span>
-          <span class="sb-sub">Seminovos</span>
+          <span class="name">MeR</span>
+          <span class="sub">Seminovos</span>
         </div>
       </div>
-      <button id="btnToggle">&#8249;</button>
+      <button id="btnToggle">‹</button>
     </div>
 
     <nav class="sb-nav">
@@ -58,7 +851,7 @@
     </nav>
 
     <div class="sb-actions">
-      <p class="sb-label">Dados</p>
+      <div class="sb-label">Dados</div>
       <button class="ab" id="btnExportar">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -75,7 +868,7 @@
         </svg>
         <span>Importar .XLS</span>
       </button>
-      <input type="file" id="fileImport" accept=".xls,.xlsx,.json" style="display:none"/>
+      <input type="file" id="fileImport" accept=".xls,.xlsx,.json" style="display:none">
     </div>
 
     <div class="sb-footer">
@@ -84,22 +877,23 @@
     </div>
   </aside>
 
-  <div id="main">
+  <main id="main">
     <header id="topbar">
       <h1 id="pageTitle">Dashboard</h1>
       <div id="topbar-right">
         <div class="search-box">
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+            <circle cx="11" cy="11" r="8"/>
+            <path d="M21 21l-4.35-4.35"/>
           </svg>
-          <input type="text" id="searchInput" placeholder="Buscar placa, modelo, proprietario..."/>
+          <input id="searchInput" type="text" placeholder="Buscar placa, modelo, proprietario...">
         </div>
         <button class="btn-ac" id="btnNovoVeiculo">+ Novo Veiculo</button>
       </div>
     </header>
 
     <section class="view active" id="view-dashboard">
-      <div class="stats-grid" id="statsGrid"></div>
+      <div id="statsGrid" class="stats-grid"></div>
       <div class="dash-cols">
         <div class="card">
           <div class="card-head">
@@ -109,7 +903,9 @@
           <div id="listaAlertas"></div>
         </div>
         <div class="card">
-          <div class="card-head"><span>Ultimos Cadastros</span></div>
+          <div class="card-head">
+            <span>Ultimos Cadastros</span>
+          </div>
           <div id="listaUltimos"></div>
         </div>
       </div>
@@ -120,22 +916,27 @@
         <div class="filtros">
           <select id="filtroTipo">
             <option value="">Todos os tipos</option>
-            <option>Carro</option><option>Moto</option>
-            <option>Caminhao</option><option>Van</option><option>Onibus</option>
+            <option>Carro</option>
+            <option>Moto</option>
+            <option>Caminhao</option>
+            <option>Van</option>
+            <option>Onibus</option>
           </select>
           <select id="filtroStatus">
             <option value="">Todos os status</option>
-            <option>Regular</option><option>Pendente</option><option>Vencido</option>
+            <option>Regular</option>
+            <option>Pendente</option>
+            <option>Vencido</option>
           </select>
         </div>
         <div class="toggle-view">
-          <button class="tv active" id="btnGrade">
+          <button class="tv active" id="btnGrade" title="Grade">
             <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
               <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
             </svg>
           </button>
-          <button class="tv" id="btnLista">
+          <button class="tv" id="btnLista" title="Lista">
             <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <line x1="8" y1="6" x2="21" y2="6"/>
               <line x1="8" y1="12" x2="21" y2="12"/>
@@ -157,55 +958,68 @@
     <section class="view" id="view-documentos">
       <div id="listaDocumentos"></div>
     </section>
-  </div>
+  </main>
 
-  <!-- MODAL VEICULO -->
   <div class="overlay" id="overlayVeiculo">
     <div class="modal">
       <div class="modal-head">
         <h2 id="tituloModal">Novo Veiculo</h2>
-        <button class="btn-x" id="btnFecharModal">&#10005;</button>
+        <button class="btn-x" id="btnFecharModal">×</button>
       </div>
       <div class="modal-body">
-        <input type="hidden" id="fId"/>
+        <input type="hidden" id="fId">
+
         <div class="fsec">
           <div class="fsec-title">Identificacao</div>
           <div class="fgrid">
-            <div class="fg"><label>Apelido / Nome</label><input type="text" id="fApelido" placeholder="Ex: Gol Prata 2020"/></div>
-            <div class="fg"><label>Placa</label><input type="text" id="fPlaca" placeholder="ABC-1234"/></div>
+            <div class="fg"><label>Apelido / Nome</label><input type="text" id="fApelido" placeholder="Ex: Gol Prata 2020"></div>
+            <div class="fg"><label>Placa</label><input type="text" id="fPlaca" placeholder="ABC-1234"></div>
             <div class="fg"><label>Tipo</label>
               <select id="fTipo">
                 <option value="">Selecione</option>
-                <option>Carro</option><option>Moto</option>
-                <option>Caminhao</option><option>Van</option><option>Onibus</option>
+                <option>Carro</option>
+                <option>Moto</option>
+                <option>Caminhao</option>
+                <option>Van</option>
+                <option>Onibus</option>
               </select>
             </div>
             <div class="fg"><label>Status</label>
               <select id="fStatus">
-                <option>Regular</option><option>Pendente</option><option>Vencido</option>
+                <option>Regular</option>
+                <option>Pendente</option>
+                <option>Vencido</option>
               </select>
             </div>
-            <div class="fg"><label>Marca</label><input type="text" id="fMarca" placeholder="Volkswagen"/></div>
-            <div class="fg"><label>Modelo</label><input type="text" id="fModelo" placeholder="Gol"/></div>
-            <div class="fg"><label>Ano</label><input type="number" id="fAno" placeholder="2020"/></div>
-            <div class="fg"><label>Cor</label><input type="text" id="fCor" placeholder="Prata"/></div>
-            <div class="fg"><label>RENAVAM</label><input type="text" id="fRenavam" placeholder="00000000000"/></div>
-            <div class="fg"><label>Chassi</label><input type="text" id="fChassi" placeholder="9BWZZZ377VT004251"/></div>
+            <div class="fg"><label>Marca</label><input type="text" id="fMarca" placeholder="Volkswagen"></div>
+            <div class="fg"><label>Modelo</label><input type="text" id="fModelo" placeholder="Gol"></div>
+            <div class="fg"><label>Ano</label><input type="number" id="fAno" placeholder="2020"></div>
+            <div class="fg"><label>Cor</label><input type="text" id="fCor" placeholder="Prata"></div>
+            <div class="fg"><label>RENAVAM</label><input type="text" id="fRenavam" placeholder="00000000000"></div>
+            <div class="fg"><label>Chassi</label><input type="text" id="fChassi" placeholder="9BWZZZ377VT004251"></div>
           </div>
-          <div class="fg"><label>Proprietario</label><input type="text" id="fProprietario" placeholder="Nome completo"/></div>
-          <div class="fg mt8"><label>Observacoes</label><textarea id="fObs" rows="3" placeholder="Anotacoes..."></textarea></div>
+          <div class="fg">
+            <label>Proprietario</label>
+            <input type="text" id="fProprietario" placeholder="Nome completo">
+          </div>
+          <div class="fg" style="margin-top:12px">
+            <label>Observacoes</label>
+            <textarea id="fObs" rows="3" placeholder="Anotacoes..."></textarea>
+          </div>
         </div>
+
         <div class="fsec">
           <div class="fsec-title">Datas Importantes</div>
           <div class="fgrid">
-            <div class="fg"><label>IPVA</label><input type="date" id="fIpva"/></div>
-            <div class="fg"><label>Licenciamento</label><input type="date" id="fLicenciamento"/></div>
-            <div class="fg"><label>Seguro</label><input type="date" id="fSeguro"/></div>
-            <div class="fg"><label>CNH</label><input type="date" id="fCnh"/></div>
-            <div class="fg"><label>Proxima Revisao</label><input type="date" id="fRevisao"/></div>
-            <div class="fg"><label>Vistoria</label><input type="date" id="fVistoria"/></div>
+            <div class="fg"><label>IPVA</label><input type="date" id="fIpva"></div>
+            <div class="fg"><label>Licenciamento</label><input type="date" id="fLicenciamento"></div>
+            <div class="fg"><label>Seguro</label><input type="date" id="fSeguro"></div>
+            <div class="fg"><label>CNH</label><input type="date" id="fCnh"></div>
+            <div class="fg"><label>Proxima Revisao</label><input type="date" id="fRevisao"></div>
+            <div class="fg"><label>Vistoria</label><input type="date" id="fVistoria"></div>
           </div>
         </div>
+
         <div class="modal-foot">
           <button class="btn-ghost" id="btnCancelar">Cancelar</button>
           <button class="btn-ac" id="btnSalvar">Salvar Veiculo</button>
@@ -214,12 +1028,11 @@
     </div>
   </div>
 
-  <!-- MODAL DETALHE -->
   <div class="overlay" id="overlayDetalhe">
     <div class="modal modal-lg">
       <div class="modal-head">
         <h2 id="tituloDetalhe">Detalhe</h2>
-        <button class="btn-x" id="btnFecharDetalhe">&#10005;</button>
+        <button class="btn-x" id="btnFecharDetalhe">×</button>
       </div>
       <div class="modal-body" id="corpoDetalhe"></div>
     </div>
@@ -228,6 +1041,422 @@
   <div id="toasts"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-  <script src="app.js"></script>
-</body>
-</html>
+
+  <script>
+    (function(){
+      'use strict';
+
+      const STORAGE_KEY = 'mer_seminovos_crm_v1';
+
+      const fields = {
+        fId: 'fId',
+        fApelido: 'fApelido',
+        fPlaca: 'fPlaca',
+        fTipo: 'fTipo',
+        fStatus: 'fStatus',
+        fMarca: 'fMarca',
+        fModelo: 'fModelo',
+        fAno: 'fAno',
+        fCor: 'fCor',
+        fRenavam: 'fRenavam',
+        fChassi: 'fChassi',
+        fProprietario: 'fProprietario',
+        fObs: 'fObs',
+        fIpva: 'fIpva',
+        fLicenciamento: 'fLicenciamento',
+        fSeguro: 'fSeguro',
+        fCnh: 'fCnh',
+        fRevisao: 'fRevisao',
+        fVistoria: 'fVistoria'
+      };
+
+      const CAMPO_DATAS = [
+        { key:'ipva', label:'IPVA' },
+        { key:'licenciamento', label:'Licenciamento' },
+        { key:'seguro', label:'Seguro' },
+        { key:'cnh', label:'CNH' },
+        { key:'revisao', label:'Revisao' },
+        { key:'vistoria', label:'Vistoria' }
+      ];
+
+      let DB = [];
+      let VIEW = 'dashboard';
+      let QUERY = '';
+      let LISTA = false;
+      let EDIT_ID = null;
+      let DET_ID = null;
+
+      const $ = id => document.getElementById(id);
+      const $$ = sel => Array.from(document.querySelectorAll(sel));
+
+      function escapeHtml(v){
+        return String(v ?? '')
+          .replaceAll('&','&')
+          .replaceAll('<','<')
+          .replaceAll('>','>')
+          .replaceAll('"','&quot;')
+          .replaceAll("'",'&#39;');
+      }
+
+      function uid(){
+        if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+        return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2);
+      }
+
+      function norm(s){
+        return String(s ?? '')
+          .toLowerCase()
+          .trim()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g,'');
+      }
+
+      function loadDB(){
+        try{
+          const raw = localStorage.getItem(STORAGE_KEY);
+          const arr = raw ? JSON.parse(raw) : [];
+          return Array.isArray(arr) ? arr : [];
+        }catch{
+          return [];
+        }
+      }
+
+      function saveDB(){
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(DB));
+      }
+
+      function toast(msg, type='ok'){
+        const wrap = $('toasts');
+        const el = document.createElement('div');
+        el.className = `toast ${type}`;
+        el.innerHTML = `<span class="dot"></span><span>${escapeHtml(msg)}</span>`;
+        wrap.appendChild(el);
+        setTimeout(() => el.remove(), 3200);
+      }
+
+      function formatDate(v){
+        if (!v) return '—';
+        const d = new Date(v);
+        if (isNaN(d)) return '—';
+        return d.toLocaleDateString('pt-BR');
+      }
+
+      function startOfDay(d){
+        const x = new Date(d);
+        x.setHours(0,0,0,0);
+        return x;
+      }
+
+      function diffDays(dateA, dateB){
+        return Math.ceil((dateA - dateB) / 86400000);
+      }
+
+      function corDias(d){
+        return d < 0 ? '#ef4444' : d <= 15 ? '#f59e0b' : '#22c55e';
+      }
+
+      function textoDias(d){
+        return d < 0 ? `Vencido ha ${Math.abs(d)}d` : d === 0 ? 'Vence hoje' : `${d}d restantes`;
+      }
+
+      function carIcon(size=20){
+        return `
+          <svg width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3"/>
+            <rect x="9" y="11" width="14" height="10" rx="2"/>
+            <circle cx="12" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+          </svg>
+        `;
+      }
+
+      function editIcon(){
+        return `
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+        `;
+      }
+
+      function trashIcon(){
+        return `
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <polyline points="3 6 5 6 21 6"/>
+            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+            <path d="M10 11v6M14 11v6"/>
+            <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+          </svg>
+        `;
+      }
+
+      function docIcon(size=20){
+        return `
+          <svg width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14,2 14,8 20,8"/>
+          </svg>
+        `;
+      }
+
+      function calIcon(size=20){
+        return `
+          <svg width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <rect x="3" y="4" width="18" height="18" rx="2"/>
+            <path d="M16 2v4M8 2v4M3 10h18"/>
+          </svg>
+        `;
+      }
+
+      function pick(row, aliases){
+        const keys = Object.keys(row || {});
+        for (const alias of aliases){
+          const found = keys.find(k => norm(k) === norm(alias));
+          if (found !== undefined) return String(row[found] ?? '').trim();
+        }
+        return '';
+      }
+
+      function parseDateValue(value){
+        if (!value) return '';
+        if (value instanceof Date && !isNaN(value)) return value.toISOString().slice(0,10);
+        const s = String(value).trim();
+        const br = s.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+        if (br) return `${br[3]}-${br[2]}-${br[1]}`;
+        const d = new Date(s);
+        return isNaN(d) ? '' : d.toISOString().slice(0,10);
+      }
+
+      function mapRow(row){
+        return {
+          id: uid(),
+          criadoEm: new Date().toISOString(),
+          atualizadoEm: new Date().toISOString(),
+          documentos: [],
+          apelido: pick(row, ['Apelido','Nome','Apelido / Nome']),
+          placa: pick(row, ['Placa']),
+          tipo: pick(row, ['Tipo']),
+          status: pick(row, ['Status']) || 'Regular',
+          marca: pick(row, ['Marca']),
+          modelo: pick(row, ['Modelo']),
+          ano: pick(row, ['Ano']),
+          cor: pick(row, ['Cor']),
+          renavam: pick(row, ['RENAVAM','Renavam']),
+          chassi: pick(row, ['Chassi']),
+          proprietario: pick(row, ['Proprietario','Proprietário']),
+          obs: pick(row, ['Observacoes','Observações','Obs']),
+          ipva: parseDateValue(pick(row, ['IPVA','Venc. IPVA','Vencimento IPVA'])),
+          licenciamento: parseDateValue(pick(row, ['Licenciamento','Venc. Licenciamento'])),
+          seguro: parseDateValue(pick(row, ['Seguro','Venc. Seguro'])),
+          cnh: parseDateValue(pick(row, ['CNH','Venc. CNH'])),
+          revisao: parseDateValue(pick(row, ['Revisao','Revisão','Proxima Revisao','Próxima Revisão'])),
+          vistoria: parseDateValue(pick(row, ['Vistoria']))
+        };
+      }
+
+      function getCamposForm(){
+        return {
+          id: $(fields.fId).value.trim(),
+          apelido: $(fields.fApelido).value.trim(),
+          placa: $(fields.fPlaca).value.trim(),
+          tipo: $(fields.fTipo).value.trim(),
+          status: $(fields.fStatus).value.trim() || 'Regular',
+          marca: $(fields.fMarca).value.trim(),
+          modelo: $(fields.fModelo).value.trim(),
+          ano: $(fields.fAno).value.trim(),
+          cor: $(fields.fCor).value.trim(),
+          renavam: $(fields.fRenavam).value.trim(),
+          chassi: $(fields.fChassi).value.trim(),
+          proprietario: $(fields.fProprietario).value.trim(),
+          obs: $(fields.fObs).value.trim(),
+          ipva: $(fields.fIpva).value,
+          licenciamento: $(fields.fLicenciamento).value,
+          seguro: $(fields.fSeguro).value,
+          cnh: $(fields.fCnh).value,
+          revisao: $(fields.fRevisao).value,
+          vistoria: $(fields.fVistoria).value
+        };
+      }
+
+      function setForm(v){
+        $(fields.fId).value = v?.id || '';
+        $(fields.fApelido).value = v?.apelido || '';
+        $(fields.fPlaca).value = v?.placa || '';
+        $(fields.fTipo).value = v?.tipo || '';
+        $(fields.fStatus).value = v?.status || 'Regular';
+        $(fields.fMarca).value = v?.marca || '';
+        $(fields.fModelo).value = v?.modelo || '';
+        $(fields.fAno).value = v?.ano || '';
+        $(fields.fCor).value = v?.cor || '';
+        $(fields.fRenavam).value = v?.renavam || '';
+        $(fields.fChassi).value = v?.chassi || '';
+        $(fields.fProprietario).value = v?.proprietario || '';
+        $(fields.fObs).value = v?.obs || '';
+        $(fields.fIpva).value = v?.ipva || '';
+        $(fields.fLicenciamento).value = v?.licenciamento || '';
+        $(fields.fSeguro).value = v?.seguro || '';
+        $(fields.fCnh).value = v?.cnh || '';
+        $(fields.fRevisao).value = v?.revisao || '';
+        $(fields.fVistoria).value = v?.vistoria || '';
+      }
+
+      function openModal(id=null){
+        EDIT_ID = id;
+        const v = id ? DB.find(x => x.id === id) : null;
+        $('tituloModal').textContent = id ? 'Editar Veiculo' : 'Novo Veiculo';
+        setForm(v);
+        $('overlayVeiculo').classList.add('active');
+      }
+
+      function closeModal(){
+        $('overlayVeiculo').classList.remove('active');
+        EDIT_ID = null;
+      }
+
+      function saveVehicle(){
+        const data = getCamposForm();
+        if (!data.apelido || !data.placa){
+          toast('Preencha pelo menos Apelido e Placa', 'warn');
+          return;
+        }
+        if (!data.tipo){
+          toast('Selecione o tipo do veiculo', 'warn');
+          return;
+        }
+
+        if (data.id){
+          const idx = DB.findIndex(v => v.id === data.id);
+          if (idx === -1) return;
+
+          DB[idx] = {
+            ...DB[idx],
+            ...data,
+            atualizadoEm: new Date().toISOString(),
+            documentos: DB[idx].documentos || []
+          };
+        } else {
+          DB.unshift({
+            id: uid(),
+            criadoEm: new Date().toISOString(),
+            atualizadoEm: new Date().toISOString(),
+            documentos: [],
+            ...data
+          });
+        }
+
+        saveDB();
+        closeModal();
+        renderView(VIEW);
+        toast('Veiculo salvo com sucesso', 'ok');
+      }
+
+      function deleteVehicle(id){
+        if (!confirm('Tem certeza que deseja excluir este veiculo?')) return;
+        DB = DB.filter(v => v.id !== id);
+        saveDB();
+        renderView(VIEW);
+        toast('Veiculo excluido', 'ok');
+        if (DET_ID === id) closeDetalhe();
+      }
+
+      function openDetalhe(id){
+        const v = DB.find(x => x.id === id);
+        if (!v) return;
+        DET_ID = id;
+
+        $('tituloDetalhe').textContent = v.apelido || 'Detalhe';
+        $('corpoDetalhe').innerHTML = renderDetalheHtml(v);
+        $('overlayDetalhe').classList.add('active');
+
+        bindDetailEvents(id);
+      }
+
+      function closeDetalhe(){
+        $('overlayDetalhe').classList.remove('active');
+        DET_ID = null;
+      }
+
+      function renderDetalheHtml(v){
+        const docs = v.documentos || [];
+        const info = [
+          ['Apelido', v.apelido],
+          ['Placa', v.placa],
+          ['Tipo', v.tipo],
+          ['Status', v.status],
+          ['Marca', v.marca],
+          ['Modelo', v.modelo],
+          ['Ano', v.ano],
+          ['Cor', v.cor],
+          ['RENAVAM', v.renavam],
+          ['Chassi', v.chassi],
+          ['Proprietario', v.proprietario],
+          ['Criado em', formatDate(v.criadoEm)]
+        ];
+
+        const datas = [
+          ['IPVA', v.ipva],
+          ['Licenciamento', v.licenciamento],
+          ['Seguro', v.seguro],
+          ['CNH', v.cnh],
+          ['Revisao', v.revisao],
+          ['Vistoria', v.vistoria]
+        ];
+
+        return `
+          <div class="detail-grid">
+            <div>
+              <div class="det-card">
+                <div class="det-title">
+                  <span>Informacoes</span>
+                  <div style="display:flex;gap:8px">
+                    <button class="btn-ghost" id="detEdit">Editar</button>
+                    <button class="btn-ghost" id="detDelete" style="border-color:rgba(239,68,68,.35);color:#ef4444">Excluir</button>
+                  </div>
+                </div>
+                <div class="det-info">
+                  ${info.map(([k,val]) => `
+                    <div class="info">
+                      <label>${escapeHtml(k)}</label>
+                      <span>${escapeHtml(val || '—')}</span>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+
+              <div class="det-card">
+                <div class="det-title"><span>Datas</span></div>
+                <div class="det-info">
+                  ${datas.map(([k,val]) => `
+                    <div class="info">
+                      <label>${escapeHtml(k)}</label>
+                      <span>${escapeHtml(formatDate(val))}</span>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div class="det-card">
+                <div class="det-title"><span>Adicionar Documento</span></div>
+                <div class="upload-row">
+                  <div class="fg">
+                    <label>Arquivo</label>
+                    <input type="file" id="docFile" accept=".pdf,.jpg,.jpeg,.png,.webp">
+                  </div>
+                  <div class="fg">
+                    <label>Nome</label>
+                    <input type="text" id="docNome" placeholder="Documento">
+                  </div>
+                  <div class="fg">
+                    <label>Tipo</label>
+                    <select id="docTipo">
+                      <option>Outro</option>
+                      <option>CRLV</option>
+                      <option>PDF</option>
+                      <option>Foto</option>
+                      <option>Comprovante</option>
+                    </select>
+                  </div>
+                </div>
+                <button class="btn-ac" id="btn
+
