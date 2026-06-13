@@ -838,7 +838,6 @@
     <div class="sb-ac">
       <div class="lbl hid">Dados</div>
 
-      <!-- BOTÃO DE IMPORTAÇÃO ATIVADO (PLANILHAS OU XML) -->
       <button class="ab" id="btnImportar" style="background: rgba(34,197,94,0.08); border-color: rgba(34,197,94,0.25); color: #22c55e;">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -849,7 +848,6 @@
       </button>
       <input type="file" id="inputImportar" accept=".xls,.xlsx,.json,.xml" hidden>
 
-      <!-- BOTÃO DE EXPORTAÇÃO XML -->
       <button class="ab" id="btnExportarXml" style="background: rgba(255,179,0,0.05); border-color: rgba(255,179,0,0.2);">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -858,7 +856,6 @@
         <span class="hid">Exportar .XML</span>
       </button>
 
-      <!-- BOTÃO DE EXPORTAÇÃO JSON (BACKUP) -->
       <button class="ab" id="btnExportar">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -889,7 +886,6 @@
       </div>
     </header>
 
-    <!-- DASHBOARD -->
     <section class="view on" id="view-dashboard">
       <div class="stats-g" id="statsGrid"></div>
 
@@ -911,7 +907,6 @@
       </div>
     </section>
 
-    <!-- VEICULOS -->
     <section class="view" id="view-veiculos">
       <div class="tlb">
         <div class="flt">
@@ -948,18 +943,15 @@
       <div id="veiculosGrid" class="grade"></div>
     </section>
 
-    <!-- VENCIMENTOS -->
     <section class="view" id="view-vencimentos">
       <div id="vencimentosWrap"></div>
     </section>
 
-    <!-- DOCUMENTOS -->
     <section class="view" id="view-documentos">
       <div id="documentosWrap"></div>
     </section>
   </main>
 
-  <!-- MODAL VEICULO -->
   <div class="ov" id="modalVeiculo">
     <div class="modal">
       <div class="modal-h">
@@ -1020,7 +1012,6 @@
     </div>
   </div>
 
-  <!-- MODAL DETALHE -->
   <div class="ov" id="modalDetalhe">
     <div class="modal">
       <div class="modal-h">
@@ -1260,7 +1251,7 @@
       el.innerHTML = lista.map((v,i) => {
         const pv = nextDue(v);
         const meta = [];
-        if (v.marca || v.modelo || v.ano) meta.push(`<span><strong>${esc(v.marca || '')}</strong> ${esc(v.modelo || '')} ${esc(v.ano || '')}</span>`);
+        if (v.marca || v.modelo || v.ano) meta.push("<span><strong>" + esc(v.marca || '') + "</strong> " + esc(v.modelo || '') + " " + esc(v.ano || '') + "</span>");
         if (v.cor) meta.push(`<span>Cor: <strong>${esc(v.cor)}</strong></span>`);
         if (v.proprietario) meta.push(`<span>Prop: <strong>${esc(v.proprietario)}</strong></span>`);
         if (pv) meta.push(`<span style="color:${pv.c}">${esc(pv.l)}: ${esc(pv.t)}</span>`);
@@ -1628,13 +1619,13 @@
       }
     }
 
-    // --- LEITOR UNIVERSAL AUTOMÁTICO (PLANILHAS EXCEL OU XML DO ESTOQUE) ---
+    // --- PARSER XML CORRIGIDO PARA O PADRÃO REAL DA BOOM SISTEMAS ---
     function parseBoomXml(xmlString) {
       try {
         const parser = new DOMParser();
         const xmlDoc = parser.parseFromString(xmlString, "text/xml");
+        
         let veiculosTags = xmlDoc.getElementsByTagName("veiculo");
-
         if (!veiculosTags.length) veiculosTags = xmlDoc.getElementsByTagName("item");
         if (!veiculosTags.length) veiculosTags = xmlDoc.getElementsByTagName("vehicle");
 
@@ -1653,30 +1644,47 @@
             return el && el.textContent ? el.textContent.trim() : '';
           };
 
+          // CORREÇÃO DAS FOTOS: A Boom Sistemas usa a tag estrutural <midias> contendo múltiplos blocos <foto>
           const fotosArray = [];
-          const fotosContainer = vNode.getElementsByTagName("fotos")[0] || vNode;
-          const fotosLinks = fotosContainer.getElementsByTagName("foto") || fotosContainer.getElementsByTagName("url");
-          
-          for (let j = 0; j < Math.min(fotosLinks.length, 15); j++) {
-            if (fotosLinks[j] && fotosLinks[j].textContent) {
-              fotosArray.push({
-                nome: `Foto ${j + 1}`,
-                tipo: 'Foto',
-                url: fotosLinks[j].textContent.trim()
-              });
+          const midiasContainer = vNode.getElementsByTagName("midias")[0];
+          if (midiasContainer) {
+            const fotosLinks = midiasContainer.getElementsByTagName("foto");
+            for (let j = 0; j < fotosLinks.length; j++) {
+              if (fotosLinks[j] && fotosLinks[j].textContent) {
+                fotosArray.push({
+                  nome: `Foto ${j + 1}`,
+                  tipo: 'Foto',
+                  url: fotosLinks[j].textContent.trim()
+                });
+              }
+            }
+          } else {
+            // Fallback caso venha solto no nó principal
+            const fotosLinksSoltas = vNode.getElementsByTagName("foto");
+            for (let j = 0; j < fotosLinksSoltas.length; j++) {
+              if (fotosLinksSoltas[j] && fotosLinksSoltas[j].textContent) {
+                fotosArray.push({
+                  nome: `Foto ${j + 1}`,
+                  tipo: 'Foto',
+                  url: fotosLinksSoltas[j].textContent.trim()
+                });
+              }
             }
           }
 
           const marca = read('marca') || read('brand');
           const modelo = read('modelo') || read('model');
-          const versao = read('versao') || read('version');
+          
+          // CORREÇÃO DO NOME/APELIDO: Monta dinamicamente caso a tag versão venha vazia
+          const versao = read('versao') || read('version') || read('combustivel') || (read('portas') ? read('portas') + 'P' : '');
+          const nomeCarro = versao ? `${modelo} ${versao}` : modelo || 'Veículo Sem Nome';
 
           novosVeiculos.push({
             id: uid(),
             criadoEm: new Date().toISOString(),
             atualizadoEm: new Date().toISOString(),
             documentos: fotosArray,
-            apelido: versao ? `${modelo} ${versao}` : modelo || 'Veículo Sem Nome',
+            apelido: nomeCarro,
             placa: read('placa') || read('plate'),
             tipo: read('tipo') || read('type') || 'Carro',
             status: 'Regular',
@@ -1703,8 +1711,9 @@
         db = [...filtrados, ...db];
         saveDB();
         renderView(view);
-        toast(`${filtrados.length} carros adicionados com sucesso!`, 'ok');
-      } catch {
+        toast(`${filtrados.length} carros adicionados com fotos e nomes!`, 'ok');
+      } catch (err) {
+        console.error(err);
         toast('Erro de leitura nas tags do arquivo XML', 'err');
       }
     }
@@ -1823,11 +1832,11 @@
         
         const fotos = (v.documentos || []).filter(d => d.tipo === 'Foto' || d.url.startsWith('http'));
         if (fotos.length) {
-          xml += '    <fotos>\n';
+          xml += '    <midias>\n';
           fotos.forEach(f => {
             xml += `      <foto>${esc(f.url)}</foto>\n`;
           });
-          xml += '    </fotos>\n';
+          xml += '    </midias>\n';
         }
         
         xml += '  </veiculo>\n';
