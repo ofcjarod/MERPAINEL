@@ -5,50 +5,51 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MeR Seminovos</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
 
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <div class="logo">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+  <!-- SIDEBAR -->
+  <aside id="sidebar">
+    <div class="sb-header">
+      <div class="sb-logo">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
           <path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3"/>
           <rect x="9" y="11" width="14" height="10" rx="2"/>
           <circle cx="12" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
         </svg>
-        <div class="logo-text">
-          <span class="logo-name">MeR</span>
-          <span class="logo-sub">Seminovos</span>
+        <div>
+          <div class="sb-nome">MeR</div>
+          <div class="sb-sub">Seminovos</div>
         </div>
       </div>
-      <button class="sidebar-toggle" id="sidebarToggle">&#8249;</button>
+      <button id="btnToggleSidebar" class="sb-toggle">&#8249;</button>
     </div>
 
-    <nav class="sidebar-nav">
-      <button class="nav-btn active" data-view="dashboard">
+    <nav class="sb-nav">
+      <button class="nb active" data-view="dashboard">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
           <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
         </svg>
         <span>Dashboard</span>
       </button>
-      <button class="nav-btn" data-view="veiculos">
+      <button class="nb" data-view="veiculos">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3"/>
           <rect x="9" y="11" width="14" height="10" rx="2"/>
         </svg>
         <span>Veiculos</span>
       </button>
-      <button class="nav-btn" data-view="vencimentos">
+      <button class="nb" data-view="vencimentos">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <rect x="3" y="4" width="18" height="18" rx="2"/>
           <path d="M16 2v4M8 2v4M3 10h18"/>
         </svg>
         <span>Vencimentos</span>
       </button>
-      <button class="nav-btn" data-view="documentos">
+      <button class="nb" data-view="documentos">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
           <polyline points="14,2 14,8 20,8"/>
@@ -57,9 +58,9 @@
       </button>
     </nav>
 
-    <div class="sidebar-actions">
-      <div class="sidebar-actions-label">Dados</div>
-      <button class="action-btn" id="btnExportar">
+    <div class="sb-dados">
+      <div class="sb-dados-label">Dados</div>
+      <button class="db-btn" id="btnExportar">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
           <polyline points="7 10 12 15 17 10"/>
@@ -67,7 +68,7 @@
         </svg>
         <span>Exportar .XLS</span>
       </button>
-      <button class="action-btn" id="btnImportar">
+      <button class="db-btn" id="btnImportar">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
           <polyline points="17 8 12 3 7 8"/>
@@ -75,52 +76,53 @@
         </svg>
         <span>Importar .XLS</span>
       </button>
-      <input type="file" id="inputImportar" accept=".xls,.xlsx,.json" style="display:none"/>
+      <input type="file" id="fileImport" accept=".xls,.xlsx,.json" style="display:none"/>
     </div>
 
-    <div class="sidebar-footer">
-      <span class="logo-name" style="font-size:13px">MeR Seminovos</span>
+    <div class="sb-footer">
+      <span>MeR Seminovos</span>
       <small>Painel de Documentacao</small>
     </div>
   </aside>
 
-  <main class="main" id="main">
-    <header class="topbar">
-      <div class="topbar-left">
-        <h1 class="page-title" id="pageTitle">Dashboard</h1>
-      </div>
+  <!-- MAIN -->
+  <div id="main">
+
+    <header id="topbar">
+      <h1 id="pageTitle">Dashboard</h1>
       <div class="topbar-right">
-        <div class="search-wrap">
-          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <circle cx="11" cy="11" r="8"/>
-            <path d="M21 21l-4.35-4.35"/>
+        <div class="search-box">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
           </svg>
           <input type="text" id="searchInput" placeholder="Buscar placa, modelo, proprietario..."/>
         </div>
-        <button class="btn btn-primary" id="btnNovoVeiculo">+ Novo Veiculo</button>
+        <button class="btn-primario" id="btnNovoVeiculo">+ Novo Veiculo</button>
       </div>
     </header>
 
+    <!-- VIEW DASHBOARD -->
     <section class="view active" id="view-dashboard">
-      <div class="stats-grid" id="statsGrid"></div>
-      <div class="dashboard-bottom">
+      <div id="statsGrid" class="stats-grid"></div>
+      <div class="dash-row">
         <div class="card">
-          <div class="card-header">
-            <h2>Vencimentos Proximos</h2>
-            <span class="card-badge" id="countAlertas">0</span>
+          <div class="card-head">
+            <span>Vencimentos Proximos</span>
+            <span class="badge-accent" id="cntAlertas">0</span>
           </div>
-          <div id="alertasVencimento"></div>
+          <div id="listaAlertas"></div>
         </div>
         <div class="card">
-          <div class="card-header"><h2>Ultimos Cadastros</h2></div>
-          <div id="ultimosCadastros"></div>
+          <div class="card-head"><span>Ultimos Cadastros</span></div>
+          <div id="listaUltimos"></div>
         </div>
       </div>
     </section>
 
+    <!-- VIEW VEICULOS -->
     <section class="view" id="view-veiculos">
       <div class="toolbar">
-        <div class="filter-group">
+        <div class="filtros">
           <select id="filtroTipo">
             <option value="">Todos os tipos</option>
             <option>Carro</option><option>Moto</option>
@@ -131,14 +133,14 @@
             <option>Regular</option><option>Pendente</option><option>Vencido</option>
           </select>
         </div>
-        <div class="view-toggle">
-          <button class="icon-btn active" id="btnGrid" title="Grade">
+        <div class="view-btns">
+          <button class="vb active" id="btnGrade" title="Grade">
             <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
               <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
             </svg>
           </button>
-          <button class="icon-btn" id="btnList" title="Lista">
+          <button class="vb" id="btnLista" title="Lista">
             <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
               <line x1="8" y1="18" x2="21" y2="18"/>
@@ -149,91 +151,92 @@
           </button>
         </div>
       </div>
-      <div class="veiculos-grid" id="veiculosGrid"></div>
+      <div id="gradeVeiculos" class="grade"></div>
     </section>
 
+    <!-- VIEW VENCIMENTOS -->
     <section class="view" id="view-vencimentos">
-      <div class="vencimentos-wrap" id="vencimentosWrap"></div>
+      <div id="listaVencimentos"></div>
     </section>
 
+    <!-- VIEW DOCUMENTOS -->
     <section class="view" id="view-documentos">
-      <div class="documentos-wrap" id="documentosWrap"></div>
+      <div id="listaDocumentos"></div>
     </section>
-  </main>
 
-  <!-- MODAL NOVO/EDITAR -->
-  <div class="modal-overlay" id="modalVeiculo">
-    <div class="modal">
-      <div class="modal-header">
-        <h2 id="modalTitle">Novo Veiculo</h2>
-        <button class="close-btn" id="closeModal">&#10005;</button>
+  </div>
+
+  <!-- MODAL VEICULO -->
+  <div class="overlay" id="overlayVeiculo">
+    <div class="modal" id="modalVeiculo">
+      <div class="modal-head">
+        <h2 id="tituloModal">Novo Veiculo</h2>
+        <button class="btn-fechar" id="btnFecharModal">&#10005;</button>
       </div>
       <div class="modal-body">
-        <form id="formVeiculo" onsubmit="return false">
-          <input type="hidden" id="veiculoId"/>
-          <div class="form-section">
-            <h3>Identificacao</h3>
-            <div class="form-grid">
-              <div class="form-group"><label>Apelido / Nome</label><input type="text" id="fApelido" placeholder="Ex: Gol Prata 2020"/></div>
-              <div class="form-group"><label>Placa</label><input type="text" id="fPlaca" placeholder="ABC-1234"/></div>
-              <div class="form-group"><label>Tipo</label>
-                <select id="fTipo">
-                  <option value="">Selecione</option>
-                  <option>Carro</option><option>Moto</option>
-                  <option>Caminhao</option><option>Van</option><option>Onibus</option>
-                </select>
-              </div>
-              <div class="form-group"><label>Status</label>
-                <select id="fStatus">
-                  <option>Regular</option><option>Pendente</option><option>Vencido</option>
-                </select>
-              </div>
+        <input type="hidden" id="fId"/>
+
+        <div class="fsec">
+          <div class="fsec-title">Identificacao</div>
+          <div class="fgrid2">
+            <div class="fg"><label>Apelido / Nome</label><input type="text" id="fApelido" placeholder="Ex: Gol Prata 2020"/></div>
+            <div class="fg"><label>Placa</label><input type="text" id="fPlaca" placeholder="ABC-1234"/></div>
+            <div class="fg"><label>Tipo</label>
+              <select id="fTipo">
+                <option value="">Selecione</option>
+                <option>Carro</option><option>Moto</option>
+                <option>Caminhao</option><option>Van</option><option>Onibus</option>
+              </select>
             </div>
-            <div class="form-grid">
-              <div class="form-group"><label>Marca</label><input type="text" id="fMarca" placeholder="Volkswagen"/></div>
-              <div class="form-group"><label>Modelo</label><input type="text" id="fModelo" placeholder="Gol"/></div>
-              <div class="form-group"><label>Ano</label><input type="number" id="fAno" placeholder="2020"/></div>
-              <div class="form-group"><label>Cor</label><input type="text" id="fCor" placeholder="Prata"/></div>
+            <div class="fg"><label>Status</label>
+              <select id="fStatus">
+                <option>Regular</option><option>Pendente</option><option>Vencido</option>
+              </select>
             </div>
-            <div class="form-grid">
-              <div class="form-group"><label>RENAVAM</label><input type="text" id="fRenavam" placeholder="00000000000"/></div>
-              <div class="form-group"><label>Chassi</label><input type="text" id="fChassi" placeholder="9BWZZZ377VT004251"/></div>
-            </div>
-            <div class="form-group"><label>Proprietario</label><input type="text" id="fProprietario" placeholder="Nome completo"/></div>
-            <div class="form-group"><label>Observacoes</label><textarea id="fObs" rows="3" placeholder="Anotacoes..."></textarea></div>
+            <div class="fg"><label>Marca</label><input type="text" id="fMarca" placeholder="Volkswagen"/></div>
+            <div class="fg"><label>Modelo</label><input type="text" id="fModelo" placeholder="Gol"/></div>
+            <div class="fg"><label>Ano</label><input type="number" id="fAno" placeholder="2020"/></div>
+            <div class="fg"><label>Cor</label><input type="text" id="fCor" placeholder="Prata"/></div>
+            <div class="fg"><label>RENAVAM</label><input type="text" id="fRenavam" placeholder="00000000000"/></div>
+            <div class="fg"><label>Chassi</label><input type="text" id="fChassi" placeholder="9BWZZZ377VT004251"/></div>
           </div>
-          <div class="form-section">
-            <h3>Datas Importantes</h3>
-            <div class="form-grid">
-              <div class="form-group"><label>IPVA</label><input type="date" id="fIpva"/></div>
-              <div class="form-group"><label>Licenciamento</label><input type="date" id="fLicenciamento"/></div>
-              <div class="form-group"><label>Seguro</label><input type="date" id="fSeguro"/></div>
-              <div class="form-group"><label>CNH</label><input type="date" id="fCnh"/></div>
-              <div class="form-group"><label>Proxima Revisao</label><input type="date" id="fRevisao"/></div>
-              <div class="form-group"><label>Vistoria</label><input type="date" id="fVistoria"/></div>
-            </div>
+          <div class="fg"><label>Proprietario</label><input type="text" id="fProprietario" placeholder="Nome completo"/></div>
+          <div class="fg" style="margin-top:12px"><label>Observacoes</label><textarea id="fObs" rows="3" placeholder="Anotacoes..."></textarea></div>
+        </div>
+
+        <div class="fsec">
+          <div class="fsec-title">Datas Importantes</div>
+          <div class="fgrid2">
+            <div class="fg"><label>IPVA</label><input type="date" id="fIpva"/></div>
+            <div class="fg"><label>Licenciamento</label><input type="date" id="fLicenciamento"/></div>
+            <div class="fg"><label>Seguro</label><input type="date" id="fSeguro"/></div>
+            <div class="fg"><label>CNH</label><input type="date" id="fCnh"/></div>
+            <div class="fg"><label>Proxima Revisao</label><input type="date" id="fRevisao"/></div>
+            <div class="fg"><label>Vistoria</label><input type="date" id="fVistoria"/></div>
           </div>
-          <div class="form-actions">
-            <button type="button" class="btn btn-ghost" id="cancelModal">Cancelar</button>
-            <button type="button" class="btn btn-primary" id="btnSalvar">Salvar Veiculo</button>
-          </div>
-        </form>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn-secundario" id="btnCancelarModal">Cancelar</button>
+          <button class="btn-primario" id="btnSalvarVeiculo">Salvar Veiculo</button>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- MODAL DETALHE -->
-  <div class="modal-overlay" id="modalDetalhe">
-    <div class="modal modal-lg">
-      <div class="modal-header">
-        <h2 id="detalheTitle">Detalhes</h2>
-        <button class="close-btn" id="closeDetalhe">&#10005;</button>
+  <div class="overlay" id="overlayDetalhe">
+    <div class="modal modal-lg" id="modalDetalhe">
+      <div class="modal-head">
+        <h2 id="tituloDetalhe">Detalhe</h2>
+        <button class="btn-fechar" id="btnFecharDetalhe">&#10005;</button>
       </div>
-      <div class="modal-body" id="detalheBody"></div>
+      <div class="modal-body" id="corpoDetalhe"></div>
     </div>
   </div>
 
-  <div class="toast-wrap" id="toastWrap"></div>
+  <!-- TOASTS -->
+  <div id="toasts"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <script src="app.js"></script>
