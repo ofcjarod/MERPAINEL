@@ -10,7 +10,6 @@
 </head>
 <body>
 
-  <!-- SIDEBAR -->
   <aside id="sidebar">
     <div class="sb-header">
       <div class="sb-logo">
@@ -19,12 +18,12 @@
           <rect x="9" y="11" width="14" height="10" rx="2"/>
           <circle cx="12" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
         </svg>
-        <div>
-          <div class="sb-nome">MeR</div>
-          <div class="sb-sub">Seminovos</div>
+        <div class="sb-brand">
+          <span class="sb-nome">MeR</span>
+          <span class="sb-sub">Seminovos</span>
         </div>
       </div>
-      <button id="btnToggleSidebar" class="sb-toggle">&#8249;</button>
+      <button id="btnToggle">&#8249;</button>
     </div>
 
     <nav class="sb-nav">
@@ -58,9 +57,9 @@
       </button>
     </nav>
 
-    <div class="sb-dados">
-      <div class="sb-dados-label">Dados</div>
-      <button class="db-btn" id="btnExportar">
+    <div class="sb-actions">
+      <p class="sb-label">Dados</p>
+      <button class="ab" id="btnExportar">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
           <polyline points="7 10 12 15 17 10"/>
@@ -68,7 +67,7 @@
         </svg>
         <span>Exportar .XLS</span>
       </button>
-      <button class="db-btn" id="btnImportar">
+      <button class="ab" id="btnImportar">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
           <polyline points="17 8 12 3 7 8"/>
@@ -85,30 +84,27 @@
     </div>
   </aside>
 
-  <!-- MAIN -->
   <div id="main">
-
     <header id="topbar">
       <h1 id="pageTitle">Dashboard</h1>
-      <div class="topbar-right">
+      <div id="topbar-right">
         <div class="search-box">
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
           </svg>
           <input type="text" id="searchInput" placeholder="Buscar placa, modelo, proprietario..."/>
         </div>
-        <button class="btn-primario" id="btnNovoVeiculo">+ Novo Veiculo</button>
+        <button class="btn-ac" id="btnNovoVeiculo">+ Novo Veiculo</button>
       </div>
     </header>
 
-    <!-- VIEW DASHBOARD -->
     <section class="view active" id="view-dashboard">
-      <div id="statsGrid" class="stats-grid"></div>
-      <div class="dash-row">
+      <div class="stats-grid" id="statsGrid"></div>
+      <div class="dash-cols">
         <div class="card">
           <div class="card-head">
             <span>Vencimentos Proximos</span>
-            <span class="badge-accent" id="cntAlertas">0</span>
+            <span class="badge" id="cntAlertas">0</span>
           </div>
           <div id="listaAlertas"></div>
         </div>
@@ -119,7 +115,6 @@
       </div>
     </section>
 
-    <!-- VIEW VEICULOS -->
     <section class="view" id="view-veiculos">
       <div class="toolbar">
         <div class="filtros">
@@ -133,16 +128,17 @@
             <option>Regular</option><option>Pendente</option><option>Vencido</option>
           </select>
         </div>
-        <div class="view-btns">
-          <button class="vb active" id="btnGrade" title="Grade">
+        <div class="toggle-view">
+          <button class="tv active" id="btnGrade">
             <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
               <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
             </svg>
           </button>
-          <button class="vb" id="btnLista" title="Lista">
+          <button class="tv" id="btnLista">
             <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
+              <line x1="8" y1="6" x2="21" y2="6"/>
+              <line x1="8" y1="12" x2="21" y2="12"/>
               <line x1="8" y1="18" x2="21" y2="18"/>
               <line x1="3" y1="6" x2="3.01" y2="6"/>
               <line x1="3" y1="12" x2="3.01" y2="12"/>
@@ -154,31 +150,27 @@
       <div id="gradeVeiculos" class="grade"></div>
     </section>
 
-    <!-- VIEW VENCIMENTOS -->
     <section class="view" id="view-vencimentos">
       <div id="listaVencimentos"></div>
     </section>
 
-    <!-- VIEW DOCUMENTOS -->
     <section class="view" id="view-documentos">
       <div id="listaDocumentos"></div>
     </section>
-
   </div>
 
   <!-- MODAL VEICULO -->
   <div class="overlay" id="overlayVeiculo">
-    <div class="modal" id="modalVeiculo">
+    <div class="modal">
       <div class="modal-head">
         <h2 id="tituloModal">Novo Veiculo</h2>
-        <button class="btn-fechar" id="btnFecharModal">&#10005;</button>
+        <button class="btn-x" id="btnFecharModal">&#10005;</button>
       </div>
       <div class="modal-body">
         <input type="hidden" id="fId"/>
-
         <div class="fsec">
           <div class="fsec-title">Identificacao</div>
-          <div class="fgrid2">
+          <div class="fgrid">
             <div class="fg"><label>Apelido / Nome</label><input type="text" id="fApelido" placeholder="Ex: Gol Prata 2020"/></div>
             <div class="fg"><label>Placa</label><input type="text" id="fPlaca" placeholder="ABC-1234"/></div>
             <div class="fg"><label>Tipo</label>
@@ -201,12 +193,11 @@
             <div class="fg"><label>Chassi</label><input type="text" id="fChassi" placeholder="9BWZZZ377VT004251"/></div>
           </div>
           <div class="fg"><label>Proprietario</label><input type="text" id="fProprietario" placeholder="Nome completo"/></div>
-          <div class="fg" style="margin-top:12px"><label>Observacoes</label><textarea id="fObs" rows="3" placeholder="Anotacoes..."></textarea></div>
+          <div class="fg mt8"><label>Observacoes</label><textarea id="fObs" rows="3" placeholder="Anotacoes..."></textarea></div>
         </div>
-
         <div class="fsec">
           <div class="fsec-title">Datas Importantes</div>
-          <div class="fgrid2">
+          <div class="fgrid">
             <div class="fg"><label>IPVA</label><input type="date" id="fIpva"/></div>
             <div class="fg"><label>Licenciamento</label><input type="date" id="fLicenciamento"/></div>
             <div class="fg"><label>Seguro</label><input type="date" id="fSeguro"/></div>
@@ -215,10 +206,9 @@
             <div class="fg"><label>Vistoria</label><input type="date" id="fVistoria"/></div>
           </div>
         </div>
-
-        <div class="modal-footer">
-          <button class="btn-secundario" id="btnCancelarModal">Cancelar</button>
-          <button class="btn-primario" id="btnSalvarVeiculo">Salvar Veiculo</button>
+        <div class="modal-foot">
+          <button class="btn-ghost" id="btnCancelar">Cancelar</button>
+          <button class="btn-ac" id="btnSalvar">Salvar Veiculo</button>
         </div>
       </div>
     </div>
@@ -226,16 +216,15 @@
 
   <!-- MODAL DETALHE -->
   <div class="overlay" id="overlayDetalhe">
-    <div class="modal modal-lg" id="modalDetalhe">
+    <div class="modal modal-lg">
       <div class="modal-head">
         <h2 id="tituloDetalhe">Detalhe</h2>
-        <button class="btn-fechar" id="btnFecharDetalhe">&#10005;</button>
+        <button class="btn-x" id="btnFecharDetalhe">&#10005;</button>
       </div>
       <div class="modal-body" id="corpoDetalhe"></div>
     </div>
   </div>
 
-  <!-- TOASTS -->
   <div id="toasts"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
