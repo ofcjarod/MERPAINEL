@@ -1,871 +1,1730 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>MeR Seminovos</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@800;900&display=swap" rel="stylesheet"/>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#080808;--bg2:#111;--bg3:#181818;--bg4:#222;
-  --brd:#2a2a2a;--txt:#f0f0f0;--sub:#888;--mut:#555;
-  --ac:#ffb300;--ac2:#ff7a18;
-  --ok:#22c55e;--warn:#f59e0b;--err:#ef4444;
-  --r:12px;--sw:238px;
-}
-html,body{height:100%;overflow:hidden}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--txt);display:flex}
-*{box-sizing:border-box}
-button{cursor:pointer;font:inherit;border:none;outline:none;background:none}
-input,select,textarea{font:inherit;color:var(--txt);outline:none;background:none;border:none}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MeR Seminovos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#080808;
+      --bg2:#111;
+      --bg3:#181818;
+      --bg4:#222;
+      --brd:#2a2a2a;
+      --txt:#f0f0f0;
+      --sub:#9a9a9a;
+      --mut:#5d5d5d;
+      --ac:#ffb300;
+      --ac2:#ff7a18;
+      --ok:#22c55e;
+      --warn:#f59e0b;
+      --err:#ef4444;
+      --r:12px;
+      --sw:240px;
+    }
 
-/* SIDEBAR */
-#SB{
-  width:var(--sw);flex-shrink:0;
-  background:var(--bg2);border-right:1px solid var(--brd);
-  display:flex;flex-direction:column;transition:width .22s;overflow:hidden;
-}
-#SB.c{width:60px}
-#SB.c .hd{opacity:0;width:0;overflow:hidden;pointer-events:none}
-.sb-h{display:flex;align-items:center;justify-content:space-between;padding:15px 11px;border-bottom:1px solid var(--brd);flex-shrink:0;gap:8px}
-.sb-logo{display:flex;align-items:center;gap:9px;color:var(--ac);min-width:0}
-.sb-brand{display:flex;flex-direction:column;line-height:1.1;white-space:nowrap;transition:.22s}
-.bn{font-family:'Montserrat',sans-serif;font-size:16px;font-weight:900;color:var(--ac)}
-.bs{font-size:9px;font-weight:800;color:var(--ac2);text-transform:uppercase;letter-spacing:1.5px}
-#bTgl{width:26px;height:26px;border-radius:7px;background:var(--bg3);border:1px solid var(--brd);color:var(--sub);font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.2s}
-#bTgl:hover{border-color:var(--ac);color:var(--ac)}
-.sb-nav{flex:1;padding:9px 7px;display:flex;flex-direction:column;gap:3px;overflow-y:auto}
-.nb{display:flex;align-items:center;gap:10px;width:100%;padding:11px 10px;border-radius:10px;color:var(--mut);text-align:left;transition:.2s;white-space:nowrap}
-.nb:hover{background:var(--bg3);color:var(--txt)}
-.nb.on{background:rgba(255,179,0,.1);color:var(--ac)}
-.sb-ac{border-top:1px solid var(--brd);padding:9px 7px;display:flex;flex-direction:column;gap:4px}
-.lbl{font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:1px;padding:3px 5px;white-space:nowrap;transition:.22s}
-.ab{display:flex;align-items:center;gap:9px;width:100%;padding:10px 10px;border-radius:10px;background:var(--bg3);border:1px solid var(--brd);color:var(--sub);transition:.2s;white-space:nowrap}
-.ab:hover{border-color:var(--ac);color:var(--ac)}
-.sb-ft{border-top:1px solid var(--brd);padding:13px 11px;display:flex;flex-direction:column;gap:2px}
-.sb-ft span{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:900;color:var(--ac);white-space:nowrap;transition:.22s}
-.sb-ft small{font-size:10px;color:var(--mut);white-space:nowrap;transition:.22s}
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;overflow:hidden}
+    body{
+      font-family:'Inter',sans-serif;
+      background:var(--bg);
+      color:var(--txt);
+      display:flex;
+    }
 
-/* MAIN */
-#MN{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
-#TB{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:15px 20px;border-bottom:1px solid var(--brd);background:#0d0d0d;flex-shrink:0}
-#pgT{font-family:'Montserrat',sans-serif;font-size:25px;font-weight:900;letter-spacing:-.4px}
-.tb-r{display:flex;align-items:center;gap:9px}
-.sbox{display:flex;align-items:center;gap:7px;padding:9px 12px;background:var(--bg3);border:1px solid var(--brd);border-radius:11px}
-.sbox input{background:transparent;border:none;color:var(--txt);width:260px}
-.sbox input::placeholder{color:var(--mut)}
+    button,input,select,textarea{
+      font:inherit;
+      outline:none;
+    }
 
-/* BOTOES */
-.bac{padding:10px 16px;border-radius:11px;font-weight:700;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#111;transition:.2s}
-.bac:hover{filter:brightness(1.08)}
-.bgh{padding:9px 14px;border-radius:10px;font-weight:600;background:var(--bg3);border:1px solid var(--brd);color:var(--txt);transition:.2s}
-.bgh:hover{border-color:var(--ac);color:var(--ac)}
-.bdn{padding:9px 14px;border-radius:10px;font-weight:600;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);color:var(--err);transition:.2s}
-.bdn:hover{background:rgba(239,68,68,.15)}
-.bsm{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--bg3);border:1px solid var(--brd);color:var(--sub);transition:.2s}
-.bsm:hover{border-color:var(--ac);color:var(--ac)}
-.bx{color:var(--sub);font-size:20px;transition:.2s;width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center}
-.bx:hover{background:var(--bg3);color:var(--txt)}
-.tv{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:var(--bg3);border:1px solid var(--brd);color:var(--sub);transition:.2s}
-.tv.on{background:rgba(255,179,0,.1);border-color:rgba(255,179,0,.3);color:var(--ac)}
+    button{
+      cursor:pointer;
+      border:none;
+      background:none;
+    }
 
-/* VIEWS */
-.view{display:none;flex:1;overflow-y:auto;padding:18px 20px 40px}
-.view.on{display:block}
+    a{color:var(--ac);text-decoration:none}
 
-/* STATS */
-.stats-g{display:grid;grid-template-columns:repeat(5,1fr);gap:11px;margin-bottom:18px}
-.sc{background:var(--bg2);border:1px solid var(--brd);border-top:3px solid transparent;border-radius:var(--r);padding:15px;animation:fi .3s ease}
-.sc-v{font-size:30px;font-weight:900;line-height:1;margin-bottom:5px}
-.sc-l{font-size:11px;color:var(--sub);text-transform:uppercase;letter-spacing:.7px;font-weight:700}
+    /* SIDEBAR */
+    #sidebar{
+      width:var(--sw);
+      flex-shrink:0;
+      background:var(--bg2);
+      border-right:1px solid var(--brd);
+      display:flex;
+      flex-direction:column;
+      overflow:hidden;
+      transition:width .22s ease;
+    }
+    #sidebar.collapsed{width:60px}
+    #sidebar.collapsed .hid{
+      width:0;
+      opacity:0;
+      overflow:hidden;
+      pointer-events:none;
+    }
 
-/* DASH */
-.dash-c{display:grid;grid-template-columns:1fr 1fr;gap:13px}
-.card{background:var(--bg2);border:1px solid var(--brd);border-radius:var(--r);overflow:hidden}
-.card-h{display:flex;align-items:center;justify-content:space-between;padding:13px 15px;border-bottom:1px solid var(--brd)}
-.card-h span{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--sub)}
-.bdg{background:rgba(255,179,0,.1);color:var(--ac);border-radius:20px;padding:2px 10px;font-size:12px;font-weight:800}
+    .sb-h{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:15px 11px;
+      border-bottom:1px solid var(--brd);
+      gap:8px;
+      flex-shrink:0;
+    }
+    .sb-logo{
+      display:flex;
+      align-items:center;
+      gap:9px;
+      color:var(--ac);
+      min-width:0;
+    }
+    .sb-brand{
+      display:flex;
+      flex-direction:column;
+      line-height:1.1;
+      white-space:nowrap;
+      transition:.2s;
+    }
+    .bn{
+      font-family:'Montserrat',sans-serif;
+      font-size:16px;
+      font-weight:900;
+      color:var(--ac);
+    }
+    .bs{
+      font-size:9px;
+      font-weight:800;
+      color:var(--ac2);
+      text-transform:uppercase;
+      letter-spacing:1.5px;
+    }
+    #btnToggle{
+      width:26px;
+      height:26px;
+      border-radius:7px;
+      background:var(--bg3);
+      border:1px solid var(--brd);
+      color:var(--sub);
+      font-size:16px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-shrink:0;
+      transition:.2s;
+    }
+    #btnToggle:hover{border-color:var(--ac);color:var(--ac)}
 
-/* ALERTA ITEMS */
-.ai{display:flex;align-items:center;gap:10px;padding:11px 15px;border-bottom:1px solid var(--brd);cursor:pointer;transition:.15s}
-.ai:last-child{border-bottom:none}
-.ai:hover{background:var(--bg3)}
-.ai-d{width:9px;height:9px;border-radius:50%;flex-shrink:0}
-.ai-ico{width:32px;height:32px;border-radius:8px;background:rgba(255,179,0,.07);border:1px solid rgba(255,179,0,.14);display:flex;align-items:center;justify-content:center;color:var(--ac);flex-shrink:0}
-.ai-inf{flex:1;min-width:0}
-.ai-inf strong{display:block;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ai-inf small{color:var(--sub);font-size:11px}
-.ai-tg{padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap}
+    .sb-nav{
+      flex:1;
+      padding:9px 7px;
+      display:flex;
+      flex-direction:column;
+      gap:3px;
+      overflow-y:auto;
+    }
 
-/* TOOLBAR */
-.tlb{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:15px}
-.flt{display:flex;gap:8px}
-.flt select{padding:9px 12px;background:var(--bg3);border:1px solid var(--brd);border-radius:10px;color:var(--txt)}
-.tvg{display:flex;gap:5px}
+    .nb{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      width:100%;
+      padding:11px 10px;
+      border-radius:10px;
+      color:var(--mut);
+      text-align:left;
+      transition:.2s;
+      white-space:nowrap;
+    }
+    .nb:hover{background:var(--bg3);color:var(--txt)}
+    .nb.on{background:rgba(255,179,0,.1);color:var(--ac)}
 
-/* GRADE */
-.grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(275px,1fr));gap:13px}
-.grade.ls{grid-template-columns:1fr}
-.vc{background:var(--bg2);border:1px solid var(--brd);border-radius:var(--r);padding:15px;cursor:pointer;transition:.18s;animation:fi .25s ease}
-.vc:hover{border-color:rgba(255,179,0,.3);transform:translateY(-1px);box-shadow:0 8px 22px rgba(0,0,0,.28)}
-.vc-tp{display:flex;align-items:flex-start;gap:11px;margin-bottom:11px}
-.vc-ico{width:40px;height:40px;border-radius:10px;background:rgba(255,179,0,.07);border:1px solid rgba(255,179,0,.14);display:flex;align-items:center;justify-content:center;color:var(--ac);flex-shrink:0}
-.vc-nm{font-size:14px;font-weight:700;line-height:1.2}
-.vc-pl{font-size:12px;color:var(--sub);margin-top:3px;letter-spacing:.4px}
-.vc-mt{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--sub);margin-bottom:11px}
-.vc-ft{display:flex;align-items:center;justify-content:space-between}
-.vc-ac{display:flex;gap:5px}
+    .sb-ac{
+      border-top:1px solid var(--brd);
+      padding:9px 7px;
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
+    .lbl{
+      font-size:10px;
+      color:var(--mut);
+      text-transform:uppercase;
+      letter-spacing:1px;
+      padding:3px 5px;
+      white-space:nowrap;
+      transition:.2s;
+    }
+    .ab{
+      display:flex;
+      align-items:center;
+      gap:9px;
+      width:100%;
+      padding:10px 10px;
+      border-radius:10px;
+      background:var(--bg3);
+      border:1px solid var(--brd);
+      color:var(--sub);
+      transition:.2s;
+      white-space:nowrap;
+    }
+    .ab:hover{border-color:var(--ac);color:var(--ac)}
+    .sb-ft{
+      border-top:1px solid var(--brd);
+      padding:13px 11px;
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+    }
+    .sb-ft span{
+      font-family:'Montserrat',sans-serif;
+      font-size:12px;
+      font-weight:900;
+      color:var(--ac);
+      white-space:nowrap;
+      transition:.2s;
+    }
+    .sb-ft small{
+      font-size:10px;
+      color:var(--mut);
+      white-space:nowrap;
+      transition:.2s;
+    }
 
-/* STATUS */
-.st{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
-.stR{background:rgba(34,197,94,.1);color:#22c55e}
-.stP{background:rgba(245,158,11,.1);color:#f59e0b}
-.stV{background:rgba(239,68,68,.1);color:#ef4444}
+    /* MAIN */
+    #main{
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      min-width:0;
+      overflow:hidden;
+    }
 
-/* VENCIMENTOS */
-.vr{display:grid;grid-template-columns:1fr 130px 130px 175px;align-items:center;gap:14px;padding:13px 16px;background:var(--bg2);border:1px solid var(--brd);border-left:3px solid transparent;border-radius:var(--r);margin-bottom:8px;cursor:pointer;transition:.18s;animation:fi .25s ease}
-.vr:hover{background:var(--bg3)}
-.vr-nm{font-size:14px;font-weight:700}
-.vr-sb{font-size:12px;color:var(--sub);margin-top:2px}
-.vr-tp{font-size:13px;font-weight:600;color:var(--sub)}
-.vr-dt{font-size:13px;font-weight:600}
-.vr-ds{font-size:13px;font-weight:800;text-align:right}
+    #topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      padding:15px 20px;
+      border-bottom:1px solid var(--brd);
+      background:#0d0d0d;
+      flex-shrink:0;
+    }
 
-/* DOCS VIEW */
-.db{background:var(--bg2);border:1px solid var(--brd);border-radius:var(--r);margin-bottom:13px;overflow:hidden}
-.db-h{display:flex;align-items:center;justify-content:space-between;padding:13px 15px;border-bottom:1px solid var(--brd);cursor:pointer;transition:.15s}
-.db-h:hover{background:var(--bg3)}
-.dr{display:flex;align-items:center;gap:11px;padding:11px 15px;border-bottom:1px solid var(--brd);transition:.15s}
-.dr:last-child{border-bottom:none}
-.dr:hover{background:var(--bg3)}
-.dr-ico{width:34px;height:34px;border-radius:8px;background:rgba(255,179,0,.07);border:1px solid rgba(255,179,0,.14);display:flex;align-items:center;justify-content:center;color:var(--ac);flex-shrink:0}
-.dr-inf{flex:1;min-width:0}
-.dr-inf strong{display:block;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.dr-inf small{color:var(--sub);font-size:11px}
+    #pgTitle{
+      font-family:'Montserrat',sans-serif;
+      font-size:25px;
+      font-weight:900;
+      letter-spacing:-.4px;
+    }
 
-/* MODAL */
-.ov{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(5px);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
-.ov.on{opacity:1;pointer-events:all}
-.modal{background:var(--bg2);border:1px solid var(--brd);border-radius:18px;width:92%;max-width:680px;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 24px 64px rgba(0,0,0,.6);animation:su .22s ease}
-.modal.lg{max-width:880px}
-.mh{display:flex;align-items:center;justify-content:space-between;padding:17px 20px;border-bottom:1px solid var(--brd);flex-shrink:0}
-.mh h2{font-family:'Montserrat',sans-serif;font-size:19px;font-weight:900}
-.mb{flex:1;overflow-y:auto;padding:20px}
-.mf{display:flex;justify-content:flex-end;gap:9px;padding:16px 20px;border-top:1px solid var(--brd);flex-shrink:0}
+    .tb-r{
+      display:flex;
+      align-items:center;
+      gap:9px;
+    }
 
-/* FORM */
-.fsec{margin-bottom:20px}
-.ftit{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--ac);margin-bottom:13px;padding-bottom:8px;border-bottom:1px solid var(--brd)}
-.fg2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
-.fg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px}
-.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:0}
-.fg label{font-size:11px;font-weight:600;color:var(--sub);text-transform:uppercase;letter-spacing:.5px}
-.fg input,.fg select,.fg textarea{background:var(--bg3);border:1px solid var(--brd);border-radius:9px;padding:10px 11px;color:var(--txt);transition:.2s;width:100%}
-.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:rgba(255,179,0,.5)}
-.fg textarea{resize:vertical}
+    .sbox{
+      display:flex;
+      align-items:center;
+      gap:7px;
+      padding:9px 12px;
+      background:var(--bg3);
+      border:1px solid var(--brd);
+      border-radius:11px;
+    }
+    .sbox input{
+      background:transparent;
+      border:none;
+      color:var(--txt);
+      width:260px;
+    }
+    .sbox input::placeholder{color:var(--mut)}
 
-/* DETALHE */
-.det-g{display:grid;grid-template-columns:1fr 340px;gap:17px}
-.det-c{background:var(--bg3);border:1px solid var(--brd);border-radius:var(--r);padding:16px;margin-bottom:14px}
-.det-th{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--ac);margin-bottom:13px;display:flex;align-items:center;justify-content:space-between}
-.inf-g{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.inf{display:flex;flex-direction:column;gap:3px}
-.inf label{font-size:10px;color:var(--sub);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
-.inf span{font-size:13px;font-weight:600}
-.up-f{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:11px}
+    /* BUTTONS */
+    .bac{
+      padding:10px 16px;
+      border-radius:11px;
+      font-weight:700;
+      background:linear-gradient(135deg,var(--ac),var(--ac2));
+      color:#111;
+      transition:.2s;
+    }
+    .bac:hover{filter:brightness(1.08)}
 
-/* TOAST */
-#toasts{position:fixed;bottom:20px;right:20px;display:flex;flex-direction:column;gap:7px;z-index:999}
-.toast{display:flex;align-items:center;gap:9px;padding:12px 16px;border-radius:12px;background:var(--bg2);border:1px solid var(--brd);font-size:13px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.4);animation:fi .25s ease}
-.tdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+    .bgh{
+      padding:9px 14px;
+      border-radius:10px;
+      font-weight:600;
+      background:var(--bg3);
+      border:1px solid var(--brd);
+      color:var(--txt);
+      transition:.2s;
+    }
+    .bgh:hover{border-color:var(--ac);color:var(--ac)}
 
-/* EMPTY */
-.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:60px 20px;color:var(--sub);text-align:center}
-.empty h3{font-size:17px;font-weight:700;color:var(--txt)}
-.empty p{font-size:13px}
+    .bdn{
+      padding:9px 14px;
+      border-radius:10px;
+      font-weight:600;
+      background:rgba(239,68,68,.08);
+      border:1px solid rgba(239,68,68,.25);
+      color:var(--err);
+      transition:.2s;
+    }
+    .bdn:hover{background:rgba(239,68,68,.15)}
 
-/* ANIM */
-@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-@keyframes su{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+    .bsm{
+      width:30px;
+      height:30px;
+      border-radius:8px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:var(--bg3);
+      border:1px solid var(--brd);
+      color:var(--sub);
+      transition:.2s;
+      flex-shrink:0;
+    }
+    .bsm:hover{border-color:var(--ac);color:var(--ac)}
 
-/* SCROLL */
-::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--brd);border-radius:99px}
+    .bx{
+      color:var(--sub);
+      font-size:20px;
+      transition:.2s;
+      width:30px;
+      height:30px;
+      border-radius:8px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .bx:hover{background:var(--bg3);color:var(--txt)}
 
-@media(max-width:900px){
-  .stats-g{grid-template-columns:repeat(3,1fr)}
-  .dash-c{grid-template-columns:1fr}
-  .det-g{grid-template-columns:1fr}
-  .vr{grid-template-columns:1fr 1fr}
-}
-</style>
+    .tv{
+      width:34px;
+      height:34px;
+      border-radius:9px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:var(--bg3);
+      border:1px solid var(--brd);
+      color:var(--sub);
+      transition:.2s;
+    }
+    .tv.on{background:rgba(255,179,0,.1);border-color:rgba(255,179,0,.3);color:var(--ac)}
+
+    /* VIEWS */
+    .view{
+      display:none;
+      flex:1;
+      overflow-y:auto;
+      padding:18px 20px 40px;
+    }
+    .view.on{display:block}
+
+    /* STATS */
+    .stats-g{
+      display:grid;
+      grid-template-columns:repeat(5,1fr);
+      gap:11px;
+      margin-bottom:18px;
+    }
+    .sc{
+      background:var(--bg2);
+      border:1px solid var(--brd);
+      border-top:3px solid transparent;
+      border-radius:var(--r);
+      padding:15px;
+    }
+    .sc-v{
+      font-size:30px;
+      font-weight:900;
+      line-height:1;
+      margin-bottom:5px;
+    }
+    .sc-l{
+      font-size:11px;
+      color:var(--sub);
+      text-transform:uppercase;
+      letter-spacing:.7px;
+      font-weight:700;
+    }
+
+    /* DASH */
+    .dash-c{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:13px;
+    }
+    .card{
+      background:var(--bg2);
+      border:1px solid var(--brd);
+      border-radius:var(--r);
+      overflow:hidden;
+    }
+    .card-h{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:13px 15px;
+      border-bottom:1px solid var(--brd);
+    }
+    .card-h span{
+      font-size:12px;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:.6px;
+      color:var(--sub);
+    }
+    .bdg{
+      background:rgba(255,179,0,.1);
+      color:var(--ac);
+      border-radius:20px;
+      padding:2px 10px;
+      font-size:12px;
+      font-weight:800;
+    }
+
+    .ai{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:11px 15px;
+      border-bottom:1px solid var(--brd);
+      cursor:pointer;
+      transition:.15s;
+    }
+    .ai:last-child{border-bottom:none}
+    .ai:hover{background:var(--bg3)}
+    .ai-d{
+      width:9px;height:9px;border-radius:50%;flex-shrink:0;
+    }
+    .ai-ico{
+      width:32px;height:32px;border-radius:8px;
+      background:rgba(255,179,0,.07);
+      border:1px solid rgba(255,179,0,.14);
+      display:flex;align-items:center;justify-content:center;
+      color:var(--ac);flex-shrink:0;
+    }
+    .ai-inf{
+      flex:1;min-width:0;
+    }
+    .ai-inf strong{
+      display:block;
+      font-size:13px;
+      font-weight:600;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .ai-inf small{
+      color:var(--sub);
+      font-size:11px;
+    }
+    .ai-tg{
+      padding:3px 9px;
+      border-radius:20px;
+      font-size:11px;
+      font-weight:700;
+      white-space:nowrap;
+    }
+
+    /* TOOLBAR */
+    .tlb{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:15px;
+    }
+    .flt{
+      display:flex;
+      gap:8px;
+    }
+    .flt select{
+      padding:9px 12px;
+      background:var(--bg3);
+      border:1px solid var(--brd);
+      border-radius:10px;
+      color:var(--txt);
+    }
+    .tvg{display:flex;gap:5px}
+
+    /* GRADE */
+    .grade{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(275px,1fr));
+      gap:13px;
+    }
+    .grade.ls{grid-template-columns:1fr}
+    .vc{
+      background:var(--bg2);
+      border:1px solid var(--brd);
+      border-radius:var(--r);
+      padding:15px;
+      cursor:pointer;
+      transition:.18s;
+    }
+    .vc:hover{
+      border-color:rgba(255,179,0,.3);
+      transform:translateY(-1px);
+      box-shadow:0 8px 22px rgba(0,0,0,.28);
+    }
+    .vc-tp{
+      display:flex;
+      align-items:flex-start;
+      gap:11px;
+      margin-bottom:11px;
+    }
+    .vc-ico{
+      width:40px;height:40px;border-radius:10px;
+      background:rgba(255,179,0,.07);
+      border:1px solid rgba(255,179,0,.14);
+      display:flex;align-items:center;justify-content:center;
+      color:var(--ac);flex-shrink:0;
+    }
+    .vc-nm{font-size:14px;font-weight:700;line-height:1.2}
+    .vc-pl{font-size:12px;color:var(--sub);margin-top:3px;letter-spacing:.4px}
+    .vc-mt{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      font-size:12px;
+      color:var(--sub);
+      margin-bottom:11px;
+    }
+    .vc-ft{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .vc-ac{display:flex;gap:5px}
+
+    /* STATUS */
+    .st{
+      padding:3px 10px;
+      border-radius:20px;
+      font-size:11px;
+      font-weight:700;
+    }
+    .stR{background:rgba(34,197,94,.1);color:#22c55e}
+    .stP{background:rgba(245,158,11,.1);color:#f59e0b}
+    .stV{background:rgba(239,68,68,.1);color:#ef4444}
+
+    /* VENCIMENTOS */
+    .vr{
+      display:grid;
+      grid-template-columns:1fr 130px 130px 175px;
+      align-items:center;
+      gap:14px;
+      padding:13px 16px;
+      background:var(--bg2);
+      border:1px solid var(--brd);
+      border-left:3px solid transparent;
+      border-radius:var(--r);
+      margin-bottom:8px;
+      cursor:pointer;
+      transition:.18s;
+    }
+    .vr:hover{background:var(--bg3)}
+    .vr-nm{font-size:14px;font-weight:700}
+    .vr-sb{font-size:12px;color:var(--sub);margin-top:2px}
+    .vr-tp{font-size:13px;font-weight:600;color:var(--sub)}
+    .vr-dt{font-size:13px;font-weight:600}
+    .vr-ds{font-size:13px;font-weight:800;text-align:right}
+
+    /* DOCS VIEW */
+    .db{
+      background:var(--bg2);
+      border:1px solid var(--brd);
+      border-radius:var(--r);
+      margin-bottom:13px;
+      overflow:hidden;
+    }
+    .db-h{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:13px 15px;
+      border-bottom:1px solid var(--brd);
+      cursor:pointer;
+      transition:.15s;
+    }
+    .db-h:hover{background:var(--bg3)}
+    .dr{
+      display:flex;
+      align-items:center;
+      gap:11px;
+      padding:11px 15px;
+      border-bottom:1px solid var(--brd);
+      transition:.15s;
+    }
+    .dr:last-child{border-bottom:none}
+    .dr:hover{background:var(--bg3)}
+    .dr-ico{
+      width:34px;height:34px;border-radius:8px;
+      background:rgba(255,179,0,.07);
+      border:1px solid rgba(255,179,0,.14);
+      display:flex;align-items:center;justify-content:center;
+      color:var(--ac);flex-shrink:0;
+    }
+    .dr-inf{flex:1;min-width:0}
+    .dr-inf strong{
+      display:block;
+      font-size:13px;
+      font-weight:600;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .dr-inf small{color:var(--sub);font-size:11px}
+
+    /* MODAL */
+    .ov{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.72);
+      backdrop-filter:blur(5px);
+      z-index:200;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .2s;
+    }
+    .ov.on{opacity:1;pointer-events:all}
+
+    .modal{
+      background:var(--bg2);
+      border:1px solid var(--brd);
+      border-radius:18px;
+      width:92%;
+      max-width:680px;
+      max-height:90vh;
+      display:flex;
+      flex-direction:column;
+      box-shadow:0 24px 64px rgba(0,0,0,.6);
+    }
+    .modal.lg{max-width:880px}
+    .mh{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:17px 20px;
+      border-bottom:1px solid var(--brd);
+      flex-shrink:0;
+    }
+    .mh h2{
+      font-family:'Montserrat',sans-serif;
+      font-size:19px;
+      font-weight:900;
+    }
+    .mb{
+      flex:1;
+      overflow-y:auto;
+      padding:20px;
+    }
+    .mf{
+      display:flex;
+      justify-content:flex-end;
+      gap:9px;
+      padding:16px 20px;
+      border-top:1px solid var(--brd);
+      flex-shrink:0;
+    }
+
+    /* FORM */
+    .fsec{margin-bottom:20px}
+    .ftit{
+      font-size:11px;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:1px;
+      color:var(--ac);
+      margin-bottom:13px;
+      padding-bottom:8px;
+      border-bottom:1px solid var(--brd);
+    }
+    .fg2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+    .fg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px}
+    .fg{
+      display:flex;
+      flex-direction:column;
+      gap:5px;
+      margin-bottom:0;
+    }
+    .fg label{
+      font-size:11px;
+      font-weight:600;
+      color:var(--sub);
+      text-transform:uppercase;
+      letter-spacing:.5px;
+    }
+    .fg input,.fg select,.fg textarea{
+      background:var(--bg3);
+      border:1px solid var(--brd);
+      border-radius:9px;
+      padding:10px 11px;
+      color:var(--txt);
+      transition:.2s;
+      width:100%;
+    }
+    .fg input:focus,.fg select:focus,.fg textarea:focus{
+      border-color:rgba(255,179,0,.5);
+    }
+    .fg textarea{resize:vertical}
+
+    /* DETALHE */
+    .det-g{
+      display:grid;
+      grid-template-columns:1fr 340px;
+      gap:17px;
+    }
+    .det-c{
+      background:var(--bg3);
+      border:1px solid var(--brd);
+      border-radius:var(--r);
+      padding:16px;
+      margin-bottom:14px;
+    }
+    .det-th{
+      font-size:11px;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:1px;
+      color:var(--ac);
+      margin-bottom:13px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .inf-g{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+    .inf{
+      background:var(--bg2);
+      border:1px solid var(--brd);
+      border-radius:10px;
+      padding:10px 11px;
+    }
+    .inf label{
+      display:block;
+      font-size:10px;
+      text-transform:uppercase;
+      letter-spacing:.5px;
+      color:var(--sub);
+      margin-bottom:4px;
+      font-weight:700;
+    }
+    .inf span{
+      font-size:13px;
+      font-weight:600;
+      word-break:break-word;
+    }
+    .upl{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .up-row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+    .doc-line{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      padding:11px 12px;
+      background:var(--bg2);
+      border:1px solid var(--brd);
+      border-radius:10px;
+      margin-top:8px;
+    }
+    .doc-line small{color:var(--sub)}
+
+    /* EMPTY */
+    .empty{
+      padding:30px 20px;
+      text-align:center;
+      background:var(--bg2);
+      border:1px dashed var(--brd);
+      border-radius:var(--r);
+      color:var(--sub);
+    }
+    .empty h3{color:var(--txt);margin-top:10px;margin-bottom:6px}
+    .empty p{font-size:13px}
+
+    /* TOASTS */
+    #toasts{
+      position:fixed;
+      right:18px;
+      bottom:18px;
+      z-index:500;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      pointer-events:none;
+    }
+    .toast{
+      min-width:260px;
+      background:#121212;
+      border:1px solid var(--brd);
+      border-left:4px solid var(--ac);
+      border-radius:12px;
+      padding:12px 14px;
+      box-shadow:0 12px 28px rgba(0,0,0,.35);
+      display:flex;
+      align-items:center;
+      gap:10px;
+      animation:up .2s ease;
+    }
+    .toast.ok{border-left-color:var(--ok)}
+    .toast.warn{border-left-color:var(--warn)}
+    .toast.err{border-left-color:var(--err)}
+    .toast .dot{
+      width:9px;height:9px;border-radius:50%;
+      flex-shrink:0;
+      background:var(--ac);
+    }
+
+    @keyframes up{
+      from{transform:translateY(8px);opacity:0}
+      to{transform:translateY(0);opacity:1}
+    }
+
+    @media (max-width:1200px){
+      .stats-g{grid-template-columns:repeat(2,1fr)}
+      .dash-c{grid-template-columns:1fr}
+      .det-g{grid-template-columns:1fr}
+      .vr{grid-template-columns:1fr 120px 120px 140px}
+    }
+    @media (max-width:820px){
+      body{overflow:auto}
+      #sidebar{position:fixed;z-index:50;height:100vh}
+      #main{margin-left:60px}
+      .stats-g{grid-template-columns:1fr}
+      .vr{grid-template-columns:1fr}
+      .fg2,.fg3,.inf-g,.up-row{grid-template-columns:1fr}
+      .sbox input{width:120px}
+    }
+  </style>
 </head>
 <body>
 
-<!-- SIDEBAR -->
-<aside id="SB">
-  <div class="sb-h">
-    <div class="sb-logo">
-      <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-        <path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3"/>
-        <rect x="9" y="11" width="14" height="10" rx="2"/>
-        <circle cx="12" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
-      </svg>
-      <div class="sb-brand hd">
-        <span class="bn">MeR</span>
-        <span class="bs">Seminovos</span>
-      </div>
-    </div>
-    <button id="bTgl">&#8249;</button>
-  </div>
-
-  <nav class="sb-nav">
-    <button class="nb on" data-v="dashboard">
-      <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
-        <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
-      </svg>
-      <span class="hd">Dashboard</span>
-    </button>
-    <button class="nb" data-v="veiculos">
-      <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3"/>
-        <rect x="9" y="11" width="14" height="10" rx="2"/>
-      </svg>
-      <span class="hd">Veiculos</span>
-    </button>
-    <button class="nb" data-v="vencimentos">
-      <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <rect x="3" y="4" width="18" height="18" rx="2"/>
-        <path d="M16 2v4M8 2v4M3 10h18"/>
-      </svg>
-      <span class="hd">Vencimentos</span>
-    </button>
-    <button class="nb" data-v="documentos">
-      <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-        <polyline points="14,2 14,8 20,8"/>
-      </svg>
-      <span class="hd">Documentos</span>
-    </button>
-  </nav>
-
-  <div class="sb-ac">
-    <p class="lbl hd">Dados</p>
-    <button class="ab" id="bExp">
-      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-        <polyline points="7 10 12 15 17 10"/>
-        <line x1="12" y1="15" x2="12" y2="3"/>
-      </svg>
-      <span class="hd">Exportar .XLS</span>
-    </button>
-    <button class="ab" id="bImp">
-      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-        <polyline points="17 8 12 3 7 8"/>
-        <line x1="12" y1="3" x2="12" y2="15"/>
-      </svg>
-      <span class="hd">Importar .XLS</span>
-    </button>
-    <input type="file" id="fImp" accept=".xls,.xlsx,.json" style="display:none"/>
-  </div>
-
-  <div class="sb-ft">
-    <span class="hd">MeR Seminovos</span>
-    <small class="hd">Painel de Documentacao</small>
-  </div>
-</aside>
-
-<!-- MAIN -->
-<div id="MN">
-  <header id="TB">
-    <h1 id="pgT">Dashboard</h1>
-    <div class="tb-r">
-      <div class="sbox">
-        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+  <aside id="sidebar">
+    <div class="sb-h">
+      <div class="sb-logo">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+          <path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3"/>
+          <rect x="9" y="11" width="14" height="10" rx="2"/>
+          <circle cx="12" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
         </svg>
-        <input type="text" id="sInput" placeholder="Buscar placa, modelo, proprietario..."/>
-      </div>
-      <button class="bac" id="bNovo">+ Novo Veiculo</button>
-    </div>
-  </header>
-
-  <!-- DASHBOARD -->
-  <section class="view on" id="view-dashboard">
-    <div class="stats-g" id="statsG"></div>
-    <div class="dash-c">
-      <div class="card">
-        <div class="card-h">
-          <span>Vencimentos Proximos</span>
-          <span class="bdg" id="cntAl">0</span>
+        <div class="sb-brand hid">
+          <span class="bn">MeR</span>
+          <span class="bs">Seminovos</span>
         </div>
-        <div id="lstAl"></div>
       </div>
-      <div class="card">
-        <div class="card-h"><span>Ultimos Cadastros</span></div>
-        <div id="lstUlt"></div>
-      </div>
+      <button id="btnToggle">‹</button>
     </div>
-  </section>
 
-  <!-- VEICULOS -->
-  <section class="view" id="view-veiculos">
-    <div class="tlb">
-      <div class="flt">
-        <select id="flTipo">
-          <option value="">Todos os tipos</option>
-          <option>Carro</option><option>Moto</option>
-          <option>Caminhao</option><option>Van</option><option>Onibus</option>
-        </select>
-        <select id="flStat">
-          <option value="">Todos os status</option>
-          <option>Regular</option><option>Pendente</option><option>Vencido</option>
-        </select>
-      </div>
-      <div class="tvg">
-        <button class="tv on" id="bGr" title="Grade">
+    <nav class="sb-nav">
+      <button class="nb on" data-view="dashboard">
+        <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+          <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+        </svg>
+        <span class="hid">Dashboard</span>
+      </button>
+      <button class="nb" data-view="veiculos">
+        <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3"/>
+          <rect x="9" y="11" width="14" height="10" rx="2"/>
+        </svg>
+        <span class="hid">Veiculos</span>
+      </button>
+      <button class="nb" data-view="vencimentos">
+        <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <rect x="3" y="4" width="18" height="18" rx="2"/>
+          <path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        <span class="hid">Vencimentos</span>
+      </button>
+      <button class="nb" data-view="documentos">
+        <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14,2 14,8 20,8"/>
+        </svg>
+        <span class="hid">Documentos</span>
+      </button>
+    </nav>
+
+    <div class="sb-ac">
+      <div class="lbl hid">Dados</div>
+      <button class="ab" id="btnExportar">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        <span class="hid">Exportar .XLS</span>
+      </button>
+      <button class="ab" id="btnImportar">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        <span class="hid">Importar .XLS</span>
+      </button>
+      <input type="file" id="inputImportar" accept=".xls,.xlsx,.json" style="display:none">
+    </div>
+
+    <div class="sb-ft">
+      <span class="hid">MeR Seminovos</span>
+      <small class="hid">Painel local</small>
+    </div>
+  </aside>
+
+  <div id="main">
+    <header id="topbar">
+      <h1 id="pgTitle">Dashboard</h1>
+      <div class="tb-r">
+        <div class="sbox">
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
-            <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+            <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
           </svg>
-        </button>
-        <button class="tv" id="bLs" title="Lista">
-          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <line x1="8" y1="6" x2="21" y2="6"/>
-            <line x1="8" y1="12" x2="21" y2="12"/>
-            <line x1="8" y1="18" x2="21" y2="18"/>
-            <line x1="3" y1="6" x2="3.01" y2="6"/>
-            <line x1="3" y1="12" x2="3.01" y2="12"/>
-            <line x1="3" y1="18" x2="3.01" y2="18"/>
-          </svg>
-        </button>
-      </div>
-    </div>
-    <div class="grade" id="gradeEl"></div>
-  </section>
-
-  <!-- VENCIMENTOS -->
-  <section class="view" id="view-vencimentos">
-    <div id="lstVenc"></div>
-  </section>
-
-  <!-- DOCUMENTOS -->
-  <section class="view" id="view-documentos">
-    <div id="lstDocs"></div>
-  </section>
-</div>
-
-<!-- OVERLAY VEICULO -->
-<div class="ov" id="ovV">
-  <div class="modal">
-    <div class="mh">
-      <h2 id="mTit">Novo Veiculo</h2>
-      <button class="bx" id="bFV">&#10005;</button>
-    </div>
-    <div class="mb">
-      <input type="hidden" id="fID"/>
-      <div class="fsec">
-        <div class="ftit">Identificacao</div>
-        <div class="fg2" style="margin-bottom:11px">
-          <div class="fg"><label>Apelido / Nome</label><input type="text" id="fAp" placeholder="Ex: Gol Prata 2020"/></div>
-          <div class="fg"><label>Placa</label><input type="text" id="fPl" placeholder="ABC-1234"/></div>
-          <div class="fg"><label>Tipo</label>
-            <select id="fTi">
-              <option value="">Selecione</option>
-              <option>Carro</option><option>Moto</option>
-              <option>Caminhao</option><option>Van</option><option>Onibus</option>
-            </select>
-          </div>
-          <div class="fg"><label>Status</label>
-            <select id="fSt">
-              <option>Regular</option><option>Pendente</option><option>Vencido</option>
-            </select>
-          </div>
-          <div class="fg"><label>Marca</label><input type="text" id="fMa" placeholder="Volkswagen"/></div>
-          <div class="fg"><label>Modelo</label><input type="text" id="fMo" placeholder="Gol"/></div>
-          <div class="fg"><label>Ano</label><input type="number" id="fAn" placeholder="2020"/></div>
-          <div class="fg"><label>Cor</label><input type="text" id="fCo" placeholder="Prata"/></div>
-          <div class="fg"><label>RENAVAM</label><input type="text" id="fRe" placeholder="00000000000"/></div>
-          <div class="fg"><label>Chassi</label><input type="text" id="fCh" placeholder="9BWZZZ377VT004251"/></div>
+          <input id="searchInput" type="text" placeholder="Buscar placa, modelo, proprietario...">
         </div>
-        <div class="fg" style="margin-bottom:11px"><label>Proprietario</label><input type="text" id="fPr" placeholder="Nome completo"/></div>
-        <div class="fg"><label>Observacoes</label><textarea id="fOb" rows="3" placeholder="Anotacoes..."></textarea></div>
+        <button class="bac" id="btnNovoVeiculo">+ Novo Veiculo</button>
       </div>
-      <div class="fsec">
-        <div class="ftit">Datas Importantes</div>
-        <div class="fg3">
-          <div class="fg"><label>IPVA</label><input type="date" id="dIp"/></div>
-          <div class="fg"><label>Licenciamento</label><input type="date" id="dLi"/></div>
-          <div class="fg"><label>Seguro</label><input type="date" id="dSe"/></div>
-          <div class="fg"><label>CNH</label><input type="date" id="dCn"/></div>
-          <div class="fg"><label>Revisao</label><input type="date" id="dRv"/></div>
-          <div class="fg"><label>Vistoria</label><input type="date" id="dVi"/></div>
+    </header>
+
+    <section class="view on" id="view-dashboard">
+      <div class="stats-g" id="statsGrid"></div>
+
+      <div class="dash-c">
+        <div class="card">
+          <div class="card-h">
+            <span>Vencimentos Proximos</span>
+            <span class="bdg" id="countAlertas">0</span>
+          </div>
+          <div id="alertasVencimento"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-h">
+            <span>Ultimos Cadastros</span>
+          </div>
+          <div id="ultimosCadastros"></div>
         </div>
       </div>
-    </div>
-    <div class="mf">
-      <button class="bgh" id="bCan">Cancelar</button>
-      <button class="bac" id="bSav">Salvar Veiculo</button>
+    </section>
+
+    <section class="view" id="view-veiculos">
+      <div class="tlb">
+        <div class="flt">
+          <select id="filtroTipo">
+            <option value="">Todos os tipos</option>
+            <option>Carro</option>
+            <option>Moto</option>
+            <option>Caminhao</option>
+            <option>Van</option>
+            <option>Onibus</option>
+          </select>
+          <select id="filtroStatus">
+            <option value="">Todos os status</option>
+            <option>Regular</option>
+            <option>Pendente</option>
+            <option>Vencido</option>
+          </select>
+        </div>
+
+        <div class="tvg">
+          <button class="tv on" id="btnGrade" title="Grade">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+              <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+            </svg>
+          </button>
+          <button class="tv" id="btnLista" title="Lista">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <line x1="8" y1="6" x2="21" y2="6"/>
+              <line x1="8" y1="12" x2="21" y2="12"/>
+              <line x1="8" y1="18" x2="21" y2="18"/>
+              <line x1="3" y1="6" x2="3.01" y2="6"/>
+              <line x1="3" y1="12" x2="3.01" y2="12"/>
+              <line x1="3" y1="18" x2="3.01" y2="18"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="grade" id="veiculosGrid"></div>
+    </section>
+
+    <section class="view" id="view-vencimentos">
+      <div id="vencimentosWrap"></div>
+    </section>
+
+    <section class="view" id="view-documentos">
+      <div id="documentosWrap"></div>
+    </section>
+  </div>
+
+  <!-- MODAL VEICULO -->
+  <div class="ov" id="modalVeiculo">
+    <div class="modal">
+      <div class="mh">
+        <h2 id="modalTitle">Novo Veiculo</h2>
+        <button class="bx" id="closeModal">✕</button>
+      </div>
+
+      <div class="mb">
+        <input type="hidden" id="veiculoId">
+
+        <div class="fsec">
+          <div class="ftit">Identificacao</div>
+          <div class="fg2">
+            <div class="fg">
+              <label>Apelido / Nome</label>
+              <input type="text" id="fApelido" placeholder="Ex: Gol Prata 2020">
+            </div>
+            <div class="fg">
+              <label>Placa</label>
+              <input type="text" id="fPlaca" placeholder="ABC-1234">
+            </div>
+            <div class="fg">
+              <label>Tipo</label>
+              <select id="fTipo">
+                <option value="">Selecione</option>
+                <option>Carro</option>
+                <option>Moto</option>
+                <option>Caminhao</option>
+                <option>Van</option>
+                <option>Onibus</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label>Status</label>
+              <select id="fStatus">
+                <option>Regular</option>
+                <option>Pendente</option>
+                <option>Vencido</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label>Marca</label>
+              <input type="text" id="fMarca" placeholder="Volkswagen">
+            </div>
+            <div class="fg">
+              <label>Modelo</label>
+              <input type="text" id="fModelo" placeholder="Gol">
+            </div>
+            <div class="fg">
+              <label>Ano</label>
+              <input type="number" id="fAno" placeholder="2020">
+            </div>
+            <div class="fg">
+              <label>Cor</label>
+              <input type="text" id="fCor" placeholder="Prata">
+            </div>
+            <div class="fg">
+              <label>RENAVAM</label>
+              <input type="text" id="fRenavam">
+            </div>
+            <div class="fg">
+              <label>Chassi</label>
+              <input type="text" id="fChassi">
+            </div>
+          </div>
+          <div class="fg" style="margin-top:11px">
+            <label>Proprietario</label>
+            <input type="text" id="fProprietario" placeholder="Nome completo">
+          </div>
+          <div class="fg" style="margin-top:11px">
+            <label>Observacoes</label>
+            <textarea id="fObs" rows="3" placeholder="Anotacoes..."></textarea>
+          </div>
+        </div>
+
+        <div class="fsec">
+          <div class="ftit">Datas Importantes</div>
+          <div class="fg2">
+            <div class="fg"><label>IPVA</label><input type="date" id="fIpva"></div>
+            <div class="fg"><label>Licenciamento</label><input type="date" id="fLicenciamento"></div>
+            <div class="fg"><label>Seguro</label><input type="date" id="fSeguro"></div>
+            <div class="fg"><label>CNH</label><input type="date" id="fCnh"></div>
+            <div class="fg"><label>Proxima Revisao</label><input type="date" id="fRevisao"></div>
+            <div class="fg"><label>Vistoria</label><input type="date" id="fVistoria"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mf">
+        <button class="bgh" id="btnCancelar">Cancelar</button>
+        <button class="bac" id="btnSalvar">Salvar Veiculo</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- OVERLAY DETALHE -->
-<div class="ov" id="ovD">
-  <div class="modal lg">
-    <div class="mh">
-      <h2 id="dTit">Detalhe</h2>
-      <button class="bx" id="bFD">&#10005;</button>
+  <!-- MODAL DETALHE -->
+  <div class="ov" id="modalDetalhe">
+    <div class="modal lg">
+      <div class="mh">
+        <h2 id="detTitle">Detalhe</h2>
+        <button class="bx" id="closeDetalhe">✕</button>
+      </div>
+      <div class="mb" id="detBody"></div>
     </div>
-    <div class="mb" id="dBody"></div>
   </div>
-</div>
 
-<div id="toasts"></div>
+  <div id="toasts"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-<script>
-(function(){
-'use strict';
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+  <script>
+    (() => {
+      'use strict';
 
-// ── ESTADO ────────────────────────────────────────────────────
-var KEY = 'mer_v3';
-var DB  = [];
-var VIEW = 'dashboard';
-var QUERY = '';
-var LISTA = false;
-var EDIT_ID = null;
-var DET_ID  = null;
+      const STORAGE_KEY = 'mer_seminovos_db_v1';
+      const $ = id => document.getElementById(id);
+      const $$ = sel => Array.from(document.querySelectorAll(sel));
 
-var DATAS = [
-  {k:'ipva',l:'IPVA'},
-  {k:'licenciamento',l:'Licenciamento'},
-  {k:'seguro',l:'Seguro'},
-  {k:'cnh',l:'CNH'},
-  {k:'revisao',l:'Revisao'},
-  {k:'vistoria',l:'Vistoria'}
-];
+      const DATAS = [
+        { k:'ipva', label:'IPVA' },
+        { k:'licenciamento', label:'Licenciamento' },
+        { k:'seguro', label:'Seguro' },
+        { k:'cnh', label:'CNH' },
+        { k:'revisao', label:'Revisao' },
+        { k:'vistoria', label:'Vistoria' }
+      ];
 
-// ── UTILS ─────────────────────────────────────────────────────
-function $(id){ return document.getElementById(id); }
-function $$(s){ return Array.from(document.querySelectorAll(s)); }
-function esc(s){ return String(s||'').replace(/&/g,'&').replace(/</g,'<').replace(/>/g,'>').replace(/"/g,'&quot;'); }
-function uid(){ return Date.now().toString(36)+'-'+Math.random().toString(36).slice(2); }
-function val(id){ return $(id)?$(id).value:''; }
-function setVal(id,v){ if($(id)) $(id).value = v||''; }
-function norm(s){ return String(s||'').toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
+      let DB = [];
+      let VIEW = 'dashboard';
+      let QUERY = '';
+      let LISTA = false;
+      let EDIT_ID = null;
+      let DET_ID = null;
 
-function fmtDate(s){
-  if(!s) return '—';
-  var d = new Date(s);
-  if(isNaN(d)) return '—';
-  return d.toLocaleDateString('pt-BR');
-}
+      function uid(){
+        if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+        return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2);
+      }
 
-function fmtBytes(b){
-  if(!b) return '';
-  if(b<1024) return b+' B';
-  if(b<1048576) return (b/1024).toFixed(1)+' KB';
-  return (b/1048576).toFixed(1)+' MB';
-}
+      function norm(s){
+        return String(s ?? '').toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+      }
 
-function hoje0(){
-  var d = new Date();
-  d.setHours(0,0,0,0);
-  return d;
-}
+      function esc(v){
+        return String(v ?? '')
+          .replaceAll('&','&')
+          .replaceAll('<','<')
+          .replaceAll('>','>')
+          .replaceAll('"','&quot;')
+          .replaceAll("'",'&#39;');
+      }
 
-function diffDias(s){
-  if(!s) return null;
-  return Math.ceil((new Date(s+'T00:00:00') - hoje0()) / 86400000);
-}
+      function toast(msg, type='ok'){
+        const wrap = $('toasts');
+        const el = document.createElement('div');
+        el.className = `toast ${type}`;
+        el.innerHTML = `<span class="dot"></span><span>${esc(msg)}</span>`;
+        wrap.appendChild(el);
+        setTimeout(() => el.remove(), 3000);
+      }
 
-function corDias(d){
-  return d<0?'#ef4444':d<=15?'#f59e0b':'#22c55e';
-}
+      function loadDB(){
+        try{
+          const raw = localStorage.getItem(STORAGE_KEY);
+          const parsed = raw ? JSON.parse(raw) : [];
+          return Array.isArray(parsed) ? parsed : [];
+        }catch{
+          return [];
+        }
+      }
 
-function txtDias(d){
-  return d<0?'Vencido ha '+Math.abs(d)+'d':d===0?'Vence hoje':d+'d';
-}
+      function saveDB(){
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(DB));
+      }
 
-function stClass(s){
-  if(s==='Pendente') return 'stP';
-  if(s==='Vencido')  return 'stV';
-  return 'stR';
-}
+      function fmtDate(v){
+        if (!v) return '—';
+        const d = new Date(v);
+        if (isNaN(d)) return '—';
+        return d.toLocaleDateString('pt-BR');
+      }
 
-// ── STORAGE ───────────────────────────────────────────────────
-function loadDB(){
-  try{
-    var r = localStorage.getItem(KEY);
-    var a = r?JSON.parse(r):[];
-    return Array.isArray(a)?a:[];
-  }catch(e){ return []; }
-}
+      function startOfDay(d){
+        const x = new Date(d);
+        x.setHours(0,0,0,0);
+        return x;
+      }
 
-function saveDB(){
-  localStorage.setItem(KEY, JSON.stringify(DB));
-}
+      function diffDays(dateStr){
+        if (!dateStr) return null;
+        const d = new Date(dateStr + 'T00:00:00');
+        if (isNaN(d)) return null;
+        return Math.ceil((d - startOfDay(new Date())) / 86400000);
+      }
 
-// ── ICONS ─────────────────────────────────────────────────────
-function iCar(s){
-  return '<svg width="'+s+'" height="'+s+'" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3"/><rect x="9" y="11" width="14" height="10" rx="2"/><circle cx="12" cy="21" r="1"/><circle cx="20" cy="21" r="1"/></svg>';
-}
-function iEdit(){
-  return '<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
-}
-function iTrash(){
-  return '<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>';
-}
-function iDoc(s){
-  return '<svg width="'+s+'" height="'+s+'" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>';
-}
-function iCal(s){
-  return '<svg width="'+s+'" height="'+s+'" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>';
-}
+      function corDias(d){
+        return d < 0 ? '#ef4444' : d <= 15 ? '#f59e0b' : '#22c55e';
+      }
 
-// ── TOAST ─────────────────────────────────────────────────────
-function toast(msg, type){
-  type = type||'ok';
-  var c = type==='ok'?'#22c55e':type==='warn'?'#f59e0b':'#ef4444';
-  var el = document.createElement('div');
-  el.className = 'toast';
-  el.innerHTML = '<div class="tdot" style="background:'+c+'"></div><span>'+esc(msg)+'</span>';
-  $('toasts').appendChild(el);
-  setTimeout(function(){ el.remove(); }, 3000);
-}
+      function txtDias(d){
+        return d < 0 ? `Vencido ha ${Math.abs(d)}d` : d === 0 ? 'Vence hoje' : `${d}d restantes`;
+      }
 
-// ── INIT ──────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', function(){
-  DB = loadDB();
-  bindAll();
-  goView('dashboard');
-});
+      function stClass(s){
+        if (s === 'Pendente') return 'stP';
+        if (s === 'Vencido') return 'stV';
+        return 'stR';
+      }
 
-// ── BIND ──────────────────────────────────────────────────────
-function bindAll(){
+      function carIcon(size=20){
+        return `
+          <svg width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3"/>
+            <rect x="9" y="11" width="14" height="10" rx="2"/>
+            <circle cx="12" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+          </svg>
+        `;
+      }
 
-  // Sidebar toggle
-  $('bTgl').addEventListener('click', function(){
-    $('SB').classList.toggle('c');
-  });
+      function editIcon(){
+        return `
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+        `;
+      }
 
-  // Nav buttons
-  $$('.nb').forEach(function(b){
-    b.addEventListener('click', function(){
-      $$('.nb').forEach(function(x){ x.classList.remove('on'); });
-      b.classList.add('on');
-      goView(b.dataset.v);
-    });
-  });
+      function trashIcon(){
+        return `
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <polyline points="3 6 5 6 21 6"/>
+            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+            <path d="M10 11v6M14 11v6"/>
+            <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+          </svg>
+        `;
+      }
 
-  // Novo veiculo
-  $('bNovo').addEventListener('click', function(){ openModal(null); });
+      function docIcon(size=20){
+        return `
+          <svg width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14,2 14,8 20,8"/>
+          </svg>
+        `;
+      }
 
-  // Salvar veiculo
-  $('bSav').addEventListener('click', saveVehicle);
+      function calIcon(size=20){
+        return `
+          <svg width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <rect x="3" y="4" width="18" height="18" rx="2"/>
+            <path d="M16 2v4M8 2v4M3 10h18"/>
+          </svg>
+        `;
+      }
 
-  // Cancelar / fechar modal veiculo
-  $('bFV').addEventListener('click', closeModal);
-  $('bCan').addEventListener('click', closeModal);
-  $('ovV').addEventListener('click', function(e){ if(e.target===$('ovV')) closeModal(); });
+      function pick(row, aliases){
+        const keys = Object.keys(row || {});
+        for (const alias of aliases){
+          const found = keys.find(k => norm(k) === norm(alias));
+          if (found !== undefined) return String(row[found] ?? '').trim();
+        }
+        return '';
+      }
 
-  // Fechar detalhe
-  $('bFD').addEventListener('click', closeDetalhe);
-  $('ovD').addEventListener('click', function(e){ if(e.target===$('ovD')) closeDetalhe(); });
+      function parseDateValue(value){
+        if (!value) return '';
+        if (value instanceof Date && !isNaN(value)) return value.toISOString().slice(0,10);
+        const s = String(value).trim();
+        const br = s.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+        if (br) return `${br[3]}-${br[2]}-${br[1]}`;
+        const d = new Date(s);
+        return isNaN(d) ? '' : d.toISOString().slice(0,10);
+      }
 
-  // Busca
-  $('sInput').addEventListener('input', function(){
-    QUERY = this.value.toLowerCase().trim();
-    if(VIEW==='veiculos') renderVeiculos();
-  });
+      function mapRow(row){
+        return {
+          id: uid(),
+          criadoEm: new Date().toISOString(),
+          atualizadoEm: new Date().toISOString(),
+          documentos: [],
+          apelido: pick(row, ['Apelido','Nome','Apelido / Nome']),
+          placa: pick(row, ['Placa']),
+          tipo: pick(row, ['Tipo']),
+          status: pick(row, ['Status']) || 'Regular',
+          marca: pick(row, ['Marca']),
+          modelo: pick(row, ['Modelo']),
+          ano: pick(row, ['Ano']),
+          cor: pick(row, ['Cor']),
+          renavam: pick(row, ['RENAVAM','Renavam']),
+          chassi: pick(row, ['Chassi']),
+          proprietario: pick(row, ['Proprietario','Proprietário']),
+          obs: pick(row, ['Observacoes','Observações','Obs']),
+          ipva: parseDateValue(pick(row, ['IPVA','Venc. IPVA','Vencimento IPVA'])),
+          licenciamento: parseDateValue(pick(row, ['Licenciamento','Venc. Licenciamento'])),
+          seguro: parseDateValue(pick(row, ['Seguro','Venc. Seguro'])),
+          cnh: parseDateValue(pick(row, ['CNH','Venc. CNH'])),
+          revisao: parseDateValue(pick(row, ['Revisao','Revisão','Proxima Revisao','Próxima Revisão'])),
+          vistoria: parseDateValue(pick(row, ['Vistoria']))
+        };
+      }
 
-  // Filtros
-  $('flTipo').addEventListener('change', function(){ if(VIEW==='veiculos') renderVeiculos(); });
-  $('flStat').addEventListener('change', function(){ if(VIEW==='veiculos') renderVeiculos(); });
+      function bind(){
+        document.querySelectorAll('.nb').forEach(btn => {
+          btn.addEventListener('click', () => {
+            document.querySelectorAll('.nb').forEach(x => x.classList.remove('on'));
+            btn.classList.add('on');
+            goView(btn.dataset.view);
+          });
+        });
 
-  // Grade / Lista
-  $('bGr').addEventListener('click', function(){
-    LISTA=false;
-    $('bGr').classList.add('on');
-    $('bLs').classList.remove('on');
-    if(VIEW==='veiculos') renderVeiculos();
-  });
-  $('bLs').addEventListener('click', function(){
-    LISTA=true;
-    $('bLs').classList.add('on');
-    $('bGr').classList.remove('on');
-    if(VIEW==='veiculos') renderVeiculos();
-  });
+        $('btnToggle').addEventListener('click', () => {
+          $('sidebar').classList.toggle('collapsed');
+        });
 
-  // Export / Import
-  $('bExp').addEventListener('click', exportarXLS);
-  $('bImp').addEventListener('click', function(){ $('fImp').click(); });
-  $('fImp').addEventListener('change', function(){
-    if(this.files[0]) importarArquivo(this.files[0]);
-    this.value='';
-  });
+        $('btnNovoVeiculo').addEventListener('click', () => openModal());
 
-  // Delegacao — grade veiculos
-  $('gradeEl').addEventListener('click', function(e){
-    var bEd = e.target.closest('[data-ac="ed"]');
-    var bDl = e.target.closest('[data-ac="dl"]');
-    var card = e.target.closest('[data-vid]');
-    if(bEd){ e.stopPropagation(); openModal(bEd.dataset.id); return; }
-    if(bDl){ e.stopPropagation(); deleteVehicle(bDl.dataset.id); return; }
-    if(card) openDetalhe(card.dataset.vid);
-  });
+        $('btnGrade').addEventListener('click', () => {
+          LISTA = false;
+          $('btnGrade').classList.add('on');
+          $('btnLista').classList.remove('on');
+          if (VIEW === 'veiculos') renderVeiculos();
+        });
 
-  // Delegacao — alertas e ultimos
-  $('lstAl').addEventListener('click', function(e){
-    var it = e.target.closest('[data-vid]');
-    if(it) openDetalhe(it.dataset.vid);
-  });
-  $('lstUlt').addEventListener('click', function(e){
-    var it = e.target.closest('[data-vid]');
-    if(it) openDetalhe(it.dataset.vid);
-  });
+        $('btnLista').addEventListener('click', () => {
+          LISTA = true;
+          $('btnLista').classList.add('on');
+          $('btnGrade').classList.remove('on');
+          if (VIEW === 'veiculos') renderVeiculos();
+        });
 
-  // Delegacao — vencimentos
-  $('lstVenc').addEventListener('click', function(e){
-    var it = e.target.closest('[data-vid]');
-    if(it) openDetalhe(it.dataset.vid);
-  });
+        $('searchInput').addEventListener('input', e => {
+          QUERY = e.target.value.toLowerCase().trim();
+          if (VIEW === 'veiculos') renderVeiculos();
+        });
 
-  // Delegacao — docs view
-  $('lstDocs').addEventListener('click', function(e){
-    var it = e.target.closest('[data-vid]');
-    if(it && !e.target.closest('a') && !e.target.closest('button')) openDetalhe(it.dataset.vid);
-  });
+        $('filtroTipo').addEventListener('change', () => {
+          if (VIEW === 'veiculos') renderVeiculos();
+        });
 
-  // Delegacao — detalhe (editar/excluir/upload/del-doc)
-  $('dBody').addEventListener('click', function(e){
-    if(e.target.id==='bDetEd')  { closeDetalhe(); openModal(DET_ID); return; }
-    if(e.target.id==='bDetDl')  { deleteVehicle(DET_ID); return; }
-    if(e.target.id==='bUpDoc')  { uploadDoc(); return; }
-    var bd = e.target.closest('[data-deldoc]');
-    if(bd) deleteDoc(DET_ID, bd.dataset.deldoc);
-  });
-}
+        $('filtroStatus').addEventListener('change', () => {
+          if (VIEW === 'veiculos') renderVeiculos();
+        });
 
-// ── ROUTER ────────────────────────────────────────────────────
-function goView(v){
-  VIEW = v;
-  $$('.view').forEach(function(el){ el.classList.remove('on'); });
-  $('view-'+v).classList.add('on');
-  var t={dashboard:'Dashboard',veiculos:'Veiculos',vencimentos:'Vencimentos',documentos:'Documentos'};
-  $('pgT').textContent = t[v]||v;
-  if(v==='dashboard')   renderDashboard();
-  if(v==='veiculos')    renderVeiculos();
-  if(v==='vencimentos') renderVencimentos();
-  if(v==='documentos')  renderDocumentos();
-}
+        $('btnSalvar').addEventListener('click', saveVehicle);
+        $('btnCancelar').addEventListener('click', closeModal);
+        $('closeModal').addEventListener('click', closeModal);
+        $('modalVeiculo').addEventListener('click', e => {
+          if (e.target === e.currentTarget) closeModal();
+        });
 
-// ── DASHBOARD ─────────────────────────────────────────────────
-function renderDashboard(){
-  var stats = [
-    {l:'Total',       v:DB.length, c:'#ffb300'},
-    {l:'Regulares',   v:DB.filter(function(x){return x.status==='Regular';}).length, c:'#22c55e'},
-    {l:'Pendentes',   v:DB.filter(function(x){return x.status==='Pendente';}).length, c:'#f59e0b'},
-    {l:'Vencidos',    v:DB.filter(function(x){return x.status==='Vencido';}).length, c:'#ef4444'},
-    {l:'Documentos',  v:DB.reduce(function(a,x){return a+((x.docs||[]).length);},0), c:'#ff7a18'}
-  ];
-  $('statsG').innerHTML = stats.map(function(s,i){
-    return '<div class="sc" style="animation-delay:'+(i*.07)+'s;border-top-color:'+s.c+'"><div class="sc-v" style="color:'+s.c+'">'+s.v+'</div><div class="sc-l">'+s.l+'</div></div>';
-  }).join('');
-  renderAlertas();
-  renderUltimos();
-}
+        $('closeDetalhe').addEventListener('click', closeDetalhe);
+        $('modalDetalhe').addEventListener('click', e => {
+          if (e.target === e.currentTarget) closeDetalhe();
+        });
 
-function renderAlertas(){
-  var lista = [];
-  DB.forEach(function(v){
-    DATAS.forEach(function(c){
-      var d = diffDias(v[c.k]);
-      if(d!==null && d<=60) lista.push({id:v.id, nome:v.apelido||v.placa||'Sem nome', tipo:c.l, d:d, data:v[c.k]});
-    });
-  });
-  lista.sort(function(a,b){return a.d-b.d;});
-  $('cntAl').textContent = String(lista.length);
-  if(!lista.length){
-    $('lstAl').innerHTML = '<div class="ai" style="cursor:default"><div class="ai-inf"><small>Nenhum vencimento nos proximos 60 dias</small></div></div>';
-    return;
-  }
-  $('lstAl').innerHTML = lista.slice(0,7).map(function(a){
-    var c = corDias(a.d);
-    return '<div class="ai" data-vid="'+a.id+'"><div class="ai-d" style="background:'+c+'"></div><div class="ai-inf"><strong>'+esc(a.nome)+'</strong><small>'+esc(a.tipo)+' — '+fmtDate(a.data)+'</small></div><span class="ai-tg" style="background:'+c+'22;color:'+c+'">'+txtDias(a.d)+'</span></div>';
-  }).join('');
-}
+        $('btnExportar').addEventListener('click', exportarXLS);
 
-function renderUltimos(){
-  var sorted = DB.slice().sort(function(a,b){return new Date(b.criadoEm)-new Date(a.criadoEm);});
-  if(!sorted.length){
-    $('lstUlt').innerHTML = '<div class="ai" style="cursor:default"><div class="ai-inf"><small>Nenhum veiculo cadastrado</small></div></div>';
-    return;
-  }
-  $('lstUlt').innerHTML = sorted.slice(0,6).map(function(v){
-    var sub = [v.marca,v.modelo,v.ano].filter(Boolean).join(' ')+(v.placa?' — '+v.placa:'');
-    return '<div class="ai" data-vid="'+v.id+'"><div class="ai-ico">'+iCar(15)+'</div><div class="ai-inf"><strong>'+esc(v.apelido||'Sem nome')+'</strong><small>'+esc(sub)+'</small></div><span class="st '+stClass(v.status)+'">'+esc(v.status||'Regular')+'</span></div>';
-  }).join('');
-}
+        $('btnImportar').addEventListener('click', () => {
+          $('inputImportar').click();
+        });
 
-// ── VEICULOS ──────────────────────────────────────────────────
-function renderVeiculos(){
-  var tipo   = $('flTipo').value;
-  var status = $('flStat').value;
-  var lista  = DB.filter(function(v){
-    var q = !QUERY ||
-      (v.apelido||'').toLowerCase().includes(QUERY)||
-      (v.placa||'').toLowerCase().includes(QUERY)||
-      (v.marca||'').toLowerCase().includes(QUERY)||
-      (v.modelo||'').toLowerCase().includes(QUERY)||
-      (v.proprietario||'').toLowerCase().includes(QUERY);
-    return q&&(!tipo||v.tipo===tipo)&&(!status||v.status===status);
-  });
-  var el = $('gradeEl');
-  LISTA?el.classList.add('ls'):el.classList.remove('ls');
-  if(!lista.length){
-    el.innerHTML = '<div class="empty" style="grid-column:1/-1">'+iCar(46)+'<h3>Nenhum veiculo encontrado</h3><p>Clique em "+ Novo Veiculo" para cadastrar</p></div>';
-    return;
-  }
-  el.innerHTML = lista.map(function(v,i){
-    var pv = proxVenc(v);
-    var mt = [];
-    if(v.marca||v.modelo) mt.push('<span><strong>'+esc(v.marca||'')+'</strong> '+esc(v.modelo||'')+' '+esc(v.ano||'')+'</span>');
-    if(v.cor) mt.push('<span>Cor: <strong>'+esc(v.cor)+'</strong></span>');
-    if(v.proprietario) mt.push('<span>Prop: <strong>'+esc(v.proprietario)+'</strong></span>');
-    if(pv) mt.push('<span style="color:'+pv.c+'">'+esc(pv.l)+': '+pv.t+'</span>');
-    return '<div class="vc" data-vid="'+v.id+'" style="animation-delay:'+(i*.04)+'s">'+
-      '<div class="vc-tp"><div class="vc-ico">'+iCar(21)+'</div>'+
-      '<div><div class="vc-nm">'+esc(v.apelido||'Sem nome')+'</div>'+
-      '<div class="vc-pl">'+esc(v.placa||'---')+'</div></div></div>'+
-      '<div class="vc-mt">'+mt.join('')+'</div>'+
-      '<div class="vc-ft"><span class="st '+stClass(v.status)+'">'+esc(v.status||'Regular')+'</span>'+
-      '<div class="vc-ac">'+
-      '<button class="bsm" data-ac="ed" data-id="'+v.id+'" title="Editar">'+iEdit()+'</button>'+
-      '<button class="bsm" data-ac="dl" data-id="'+v.id+'" title="Excluir">'+iTrash()+'</button>'+
-      '</div></div></div>';
-  }).join('');
-}
+        $('inputImportar').addEventListener('change', e => {
+          const file = e.target.files[0];
+          if (file) importarArquivo(file);
+          e.target.value = '';
+        });
 
-function proxVenc(v){
-  var h = hoje0(), menor = null;
-  DATAS.forEach(function(c){
-    if(!v[c.k]) return;
-    var d = Math.ceil((new Date(v[c.k]+'T00:00:00')-h)/86400000);
-    if(!menor||d<menor.d) menor={l:c.l,d:d,c:corDias(d),t:txtDias(d)};
-  });
-  return menor;
-}
+        document.addEventListener('click', e => {
+          const editBtn = e.target.closest('[data-action="edit"]');
+          const delBtn = e.target.closest('[data-action="del"]');
+          const card = e.target.closest('[data-vid]');
+          const docDel = e.target.closest('[data-deldoc]');
+          const docOpen = e.target.closest('[data-docopen]');
+          const detEdit = e.target.closest('#detEdit');
+          const detDelete = e.target.closest('#detDelete');
+          const upBtn = e.target.closest('#btnUploadDoc');
 
-// ── VENCIMENTOS ───────────────────────────────────────────────
-function renderVencimentos(){
-  var rows = [];
-  DB.forEach(function(v){
-    DATAS.forEach(function(c){
-      if(!v[c.k]) return;
-      var d = diffDias(v[c.k]);
-      rows.push({v:v,c:c,d:d,data:v[c.k]});
-    });
-  });
-  rows.sort(function(a,b){return a.d-b.d;});
-  var el = $('lstVenc');
-  if(!rows.length){
-    el.innerHTML = '<div class="empty">'+iCal(46)+'<h3>Nenhuma data cadastrada</h3><p>Adicione datas nos veiculos</p></div>';
-    return;
-  }
-  el.innerHTML = rows.map(function(r,i){
-    var cor = corDias(r.d);
-    var txt = r.d<0?'Vencido ha '+Math.abs(r.d)+' dias':r.d===0?'Vence hoje':r.d+' dias restantes';
-    return '<div class="vr" data-vid="'+r.v.id+'" style="animation-delay:'+(i*.03)+'s;border-left-color:'+cor+'">'+
-      '<div><div class="vr-nm">'+esc(r.v.apelido||'Sem nome')+'</div>'+
-      '<div class="vr-sb">'+esc(r.v.placa||'')+' '+esc(r.v.marca||'')+' '+esc(r.v.modelo||'')+'</div></div>'+
-      '<div class="vr-tp">'+esc(r.c.l)+'</div>'+
-      '<div class="vr-dt">'+fmtDate(r.data)+'</div>'+
-      '<div class="vr-ds" style="color:'+cor+'">'+txt+'</div></div>';
-  }).join('');
-}
+          if (editBtn) {
+            openModal(editBtn.dataset.id);
+            return;
+          }
 
-// ── DOCUMENTOS VIEW ───────────────────────────────────────────
-function renderDocumentos(){
-  var el  = $('lstDocs');
-  var com = DB.filter(function(v){return (v.docs||[]).length>0;});
-  if(!com.length){
-    el.innerHTML = '<div class="empty">'+iDoc(46)+'<h3>Nenhum documento salvo</h3><p>Abra um veiculo e adicione documentos</p></div>';
-    return;
-  }
-  el.innerHTML = com.map(function(v){
-    var docs = v.docs||[];
-    return '<div class="db" data-vid="'+v.id+'">'+
-      '<div class="db-h"><div style="display:flex;align-items:center;gap:9px">'+iCar(15)+'<strong>'+esc(v.apelido||v.placa||'Sem nome')+'</strong></div>'+
-      '<span class="bdg">'+docs.length+' doc'+(docs.length!==1?'s':'')+'</span></div>'+
-      docs.map(function(d){
-        return '<div class="dr">'+
-          '<div class="dr-ico">'+iDoc(15)+'</div>'+
-          '<div class="dr-inf"><strong>'+esc(d.nome)+'</strong><small>'+esc(d.tipo)+(d.size?' — '+fmtBytes(d.size):'')+'</small></div>'+
-          (d.url?'<a class="bgh" href="'+d.url+'" download="'+esc(d.nome)+'" style="font-size:12px;padding:6px 10px">Baixar</a>':'')+'</div>';
-      }).join('')+
-      '</div>';
-  }).join('');
-}
+          if (delBtn) {
+            deleteVehicle(delBtn.dataset.id);
+            return;
+          }
 
-// ── MODAL VEICULO ─────────────────────────────────────────────
-function openModal(id){
-  EDIT_ID = id||null;
-  var v = id ? DB.find(function(x){return x.id===id;}) : null;
-  $('mTit').textContent = id?'Editar Veiculo':'Novo Veiculo';
-  setVal('fID', v?v.id:'');
-  setVal('fAp', v?v.apelido:'');
-  setVal('fPl', v?v.placa:'');
-  setVal('fTi', v?v.tipo:'');
-  setVal('fSt', v?v.status:'Regular');
-  setVal('fMa', v?v.marca:'');
-  setVal('fMo', v?v.modelo:'');
-  setVal('fAn', v?v.ano:'');
-  setVal('fCo', v?v.cor:'');
-  setVal('fRe', v?v.renavam:'');
-  setVal('fCh', v?v.chassi:'');
-  setVal('fPr', v?v.proprietario:'');
-  setVal('fOb', v?v.obs:'');
-  setVal('dIp', v?v.ipva:'');
-  setVal('dLi', v?v.licenciamento:'');
-  setVal('dSe', v?v.seguro:'');
-  setVal('dCn', v?v.cnh:'');
-  setVal('dRv', v?v.revisao:'');
-  setVal('dVi', v?v.vistoria:'');
-  $('ovV').classList.add('on');
-  setTimeout(function(){$('fAp').focus();},80);
-}
+          if (docOpen) {
+            window.open(docOpen.dataset.docopen, '_blank');
+            return;
+          }
 
-function closeModal(){
-  $('ovV').classList.remove('on');
-  EDIT_ID = null;
-}
+          if (docDel) {
+            if (!DET_ID) return;
+            deleteDoc(DET_ID, docDel.dataset.deldoc);
+            return;
+          }
 
-function saveVehicle(){
-  var data = {
-    apelido: val('fAp').trim(),
-    placa:   val('fPl').trim(),
-    tipo:    val('fTi'),
-    status:  val('fSt')||'Regular',
-    marca:   val('fMa').trim(),
-    modelo:  val('fMo').trim(),
-    ano:     val('fAn').trim(),
-    cor:     val('fCo').trim(),
-    renavam: val('fRe').trim(),
-    chassi:  val('fCh').trim(),
-    proprietario: val('fPr').trim(),
-    obs:     val('fOb').trim(),
-    ipva:         val('dIp'),
-    licenciamento:val('dLi'),
-    seguro:       val('dSe'),
-    cnh:          val('dCn'),
-    revisao:      val('dRv'),
-    vistoria:     val('dVi')
-  };
-  if(!data.apelido &&
+          if (detEdit) {
+            closeDetalhe();
+            openModal(DET_ID);
+            return;
+          }
+
+          if (detDelete) {
+            deleteVehicle(DET_ID);
+            return;
+          }
+
+          if (upBtn) {
+            uploadDoc(DET_ID);
+            return;
+          }
+
+          if (card && !e.target.closest('button') && !e.target.closest('a')) {
+            openDetalhe(card.dataset.vid);
+            return;
+          }
+        });
+      }
+
+      function goView(v){
+        VIEW = v;
+        document.querySelectorAll('.view').forEach(el => el.classList.remove('on'));
+        $('view-' + v).classList.add('on');
+        const t = {
+          dashboard:'Dashboard',
+          veiculos:'Veiculos',
+          vencimentos:'Vencimentos',
+          documentos:'Documentos'
+        };
+        $('pgTitle').textContent = t[v] || v;
+
+        if (v === 'dashboard') renderDashboard();
+        if (v === 'veiculos') renderVeiculos();
+        if (v === 'vencimentos') renderVencimentos();
+        if (v === 'documentos') renderDocumentos();
+      }
+
+      function renderDashboard(){
+        const stats = [
+          { l:'Total', v:DB.length, c:'#ffb300' },
+          { l:'Regulares', v:DB.filter(x => x.status === 'Regular').length, c:'#22c55e' },
+          { l:'Pendentes', v:DB.filter(x => x.status === 'Pendente').length, c:'#f59e0b' },
+          { l:'Vencidos', v:DB.filter(x => x.status === 'Vencido').length, c:'#ef4444' },
+          { l:'Documentos', v:DB.reduce((a,x) => a + ((x.documentos || []).length), 0), c:'#ff7a18' }
+        ];
+
+        $('statsGrid').innerHTML = stats.map((s, i) => `
+          <div class="sc" style="animation-delay:${i * .06}s;border-top-color:${s.c}">
+            <div class="sc-v" style="color:${s.c}">${s.v}</div>
+            <div class="sc-l">${s.l}</div>
+          </div>
+        `).join('');
+
+        renderAlertas();
+        renderUltimos();
+      }
+
+      function renderAlertas(){
+        const hoje = startOfDay(new Date());
+        const lista = [];
+
+        DB.forEach(v => {
+          DATAS.forEach(c => {
+            const d = diffDays(v[c.k]);
+            if (d !== null && d <= 60) {
+              lista.push({
+                id: v.id,
+                nome: v.apelido || v.placa || 'Sem nome',
+                tipo: c.label,
+                d,
+                data: v[c.k]
+              });
+            }
+          });
+        });
+
+        lista.sort((a,b) => a.d - b.d);
+        $('countAlertas').textContent = String(lista.length);
+
+        if (!lista.length) {
+          $('alertasVencimento').innerHTML = `
+            <div class="empty" style="margin:12px">
+              <h3>Nenhum vencimento proximo</h3>
+              <p>Os proximos 60 dias estao livres.</p>
+            </div>
+          `;
+          return;
+        }
+
+        $('alertasVencimento').innerHTML = lista.slice(0,7).map(a => {
+          const c = corDias(a.d);
+          return `
+            <div class="ai" data-vid="${a.id}">
+              <div class="ai-d" style="background:${c}"></div>
+              <div class="ai-inf">
+                <strong>${esc(a.nome)}</strong>
+                <small>${esc(a.tipo)} — ${fmtDate(a.data)}</small>
+              </div>
+              <span class="ai-tg" style="background:${c}22;color:${c}">${txtDias(a.d)}</span>
+            </div>
+          `;
+        }).join('');
+      }
+
+      function renderUltimos(){
+        const sorted = DB.slice().sort((a,b) => new Date(b.criadoEm) - new Date(a.criadoEm));
+        if (!sorted.length) {
+          $('ultimosCadastros').innerHTML = `
+            <div class="empty" style="margin:12px">
+              <h3>Nenhum veiculo cadastrado</h3>
+              <p>Use o botao de novo veiculo para começar.</p>
+            </div>
+          `;
+          return;
+        }
+
+        $('ultimosCadastros').innerHTML = sorted.slice(0,6).map(v => {
+          const sub = [v.marca, v.modelo, v.ano].filter(Boolean).join(' ') + (v.placa ? ` — ${v.placa}` : '');
+          return `
+            <div class="ai" data-vid="${v.id}">
+              <div class="ai-ico">${carIcon(15)}</div>
+              <div class="ai-inf">
+                <strong>${esc(v.apelido || 'Sem nome')}</strong>
+                <small>${esc(sub || '—')}</small>
+              </div>
+              <span class="st ${stClass(v.status)}">${esc(v.status || 'Regular')}</span>
+            </div>
+          `;
+        }).join('');
+      }
+
+      function renderVeiculos(){
+        const tipo = $('filtroTipo').value;
+        const status = $('filtroStatus').value;
+
+        const lista = DB.filter(v => {
+          const q = !QUERY ||
+            (v.apelido || '').toLowerCase().includes(QUERY) ||
+            (v.placa || '').toLowerCase().includes(QUERY) ||
+            (v.marca || '').toLowerCase().includes(QUERY) ||
+            (v.modelo || '').toLowerCase().includes(QUERY) ||
+            (v.proprietario || '').toLowerCase().includes(QUERY);
+
+          return q && (!tipo || v.tipo === tipo) && (!status || v.status === status);
+        });
+
+        const el = $('veiculosGrid');
+        LISTA ? el.classList.add('ls') : el.classList.remove('ls');
+
+        if (!lista.length) {
+          el.innerHTML = `
+            <div class="empty" style="grid-column:1/-1">
+              ${carIcon(46)}
+              <h3>Nenhum veiculo encontrado</h3>
+              <p>Clique em "+ Novo Veiculo" para cadastrar.</p>
+            </div>
+          `;
+          return;
+        }
+
+        el.innerHTML = lista.map((v, i) => {
+          const pv = proxVenc(v);
+          const meta = [];
+          if (v.marca || v.modelo || v.ano) meta.push(`<span><strong>${esc(v.marca || '')}</strong> ${esc(v.modelo || '')} ${esc(v.ano || '')}</span>`);
+          if (v.cor) meta.push(`<span>Cor: <strong>${esc(v.cor)}</strong></span>`);
+          if (v.proprietario) meta.push(`<span>Prop: <strong>${esc(v.proprietario)}</strong></span>`);
+          if (pv) meta.push(`<span style="color:${pv.c}">${esc(pv.l)}: ${esc(pv.t)}</span>`);
+
+          return `
+            <div class="vc" data-vid="${v.id}" style="animation-delay:${i * .04}s">
+              <div class="vc-tp">
+                <div class="vc-ico">${carIcon(21)}</div>
+                <div>
+                  <div class="vc-nm">${esc(v.apelido || 'Sem nome')}</div>
+                  <div class="vc-pl">${esc(v.placa || '---')}</div>
+                </div>
+              </div>
+              <div class="vc-mt">${meta.join('')}</div>
+              <div class="vc-ft">
+                <span class="st ${stClass(v.status)}">${esc(v.status || 'Regular')}</span>
+                <div class="vc-ac">
+                  <button class="bsm" data-action="edit" data-id="${v.id}" title="Editar">${editIcon()}</button>
+                  <button class="bsm" data-action="del" data-id="${v.id}" title="Excluir">${trashIcon()}</button>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      function proxVenc(v){
+        let menor = null;
+        DATAS.forEach(c => {
+          if (!v[c.k]) return;
+          const d = diffDays(v[c.k]);
+          if (d === null) return;
+          if (!menor || d < menor.d) {
+            menor = { l:c.label, d, c:corDias(d), t:txtDias(d) };
+          }
+        });
+        return menor;
+      }
+
+      function renderVencimentos(){
+        const rows = [];
+        DB.forEach(v => {
+          DATAS.forEach(c => {
+            if (!v[c.k]) return;
+            const d = diffDays(v[c.k]);
+            if (d === null) return;
+            rows.push({ v, c, d, data:v[c.k] });
+          });
+        });
+
+        rows.sort((a,b) => a.d - b.d);
+
+        const el = $('vencimentosWrap');
+        if (!rows.length) {
+          el.innerHTML = `
+            <div class="empty">
+              ${calIcon(46)}
+              <h3>Nenhuma data cadastrada</h3>
+              <p>Adicione datas nos veiculos para acompanhar aqui.</p>
+            </div>
+          `;
+          return;
+        }
+
+        el.innerHTML = rows.map((r, i) => {
+          const cor = corDias(r.d);
+          const txt = r.d < 0 ? `Vencido ha ${Math.abs(r.d)} dias` : r.d === 0 ? 'Vence hoje' : `${r.d} dias restantes`;
+          return `
+            <div class="vr" data-vid="${r.v.id}" style="animation-delay:${i * .03}s;border-left-color:${cor}">
+              <div>
+                <div class="vr-nm">${esc(r.v.apelido || 'Sem nome')}</div>
+                <div class="vr-sb">${esc(r.v.placa || '')} ${esc(r.v.marca || '')} ${esc(r.v.modelo || '')}</div>
+              </div>
+              <div class="vr-tp">${esc(r.c.label)}</div>
+              <div class="vr-dt">${fmtDate(r.data)}</div>
+              <div class="vr-ds" style="color:${cor}">${txt}</div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      function renderDocumentos(){
+        const el = $('documentosWrap');
+        const com = DB.filter(v => (v.documentos || []).length > 0);
+
+        if (!com.length) {
+          el.innerHTML = `
+            <div class="empty">
+              ${docIcon(46)}
+              <h3>Nenhum documento salvo</h3>
+              <p>Abra um veiculo e adicione documentos no detalhe.</p>
+            </div>
+          `;
+          return;
+        }
+
+        el.innerHTML = com.map(v => {
+          const docs = v.documentos || [];
+          return `
+            <div class="db" data-vid="${v.id}">
+              <div class="db-h">
+                <div style="display:flex;align-items:center;gap:9px">
+                  ${carIcon(15)}
+                  <strong>${esc(v.apelido || v.placa || 'Sem nome')}</strong>
+                </div>
+                <span class="bdg">${docs.length} doc${docs.length !== 1 ? 's' : ''}</span>
+              </div>
+              ${docs.map(d => `
+                <div class="dr">
+                  <div class="dr-ico">${docIcon(15)}</div>
+                  <div class="dr-inf">
+                    <strong>${esc(d.nome)}</strong>
+                    <small>${esc(d.tipo)}${d.size ? ' — ' + fmtBytes(d.size) : ''}</small>
+                  </div>
+                  <div style="display:flex;gap:6px;align-items:center">
+                    ${d.url ? `<a class="bgh" href="${d.url}" download="${esc(d.nome)}" target="_blank" style="font-size:12px;padding:6px 10px">Baixar</a>` : ''}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          `;
+        }).join('');
+      }
+
+      function openModal(id=null){
+        EDIT_ID = id;
+        const v = id ? DB.find(x => x.id === id) : null;
+        $('modalTitle').textContent = id ? 'Editar Veiculo' : 'Novo Veiculo';
+
+        $('veiculoId').value = v?.id || '';
+        $('fApelido').value = v?.apelido || '';
+        $('fPlaca').value = v?.placa || '';
+        $('fTipo').value = v?.tipo || '';
+        $('fStatus').value = v?.status || 'Regular';
+        $('fMarca').value = v?.marca || '';
+        $('fModelo').value = v?.modelo || '';
+        $('fAno').value = v?.ano || '';
+        $('fCor').value = v?.cor || '';
+        $('fRenavam').value = v?.renavam || '';
+        $('fChassi').value = v?.chassi || '';
+        $('fProprietario').value = v?.proprietario || '';
+        $('fObs').value = v?.obs || '';
+        $('fIpva').value = v?.ipva || '';
+        $('fLicenciamento').value = v?.licenciamento || '';
+        $('fSeguro').value = v?.seguro || '';
+        $('fCnh').value = v?.cnh || '';
+        $('fRevisao').value = v?.revisao || '';
+        $('fVistoria').value = v?.vistoria || '';
+
+        $('modalVeiculo').classList.add('on');
+        setTimeout(() => $('fApelido').focus(), 60);
+      }
+
+      function closeModal(){
+        $('modalVeiculo').classList.remove('on');
+        EDIT_ID = null;
+      }
+
+      function saveVehicle(){
+        const data = {
+          id: $('veiculoId').value || uid(),
+          apelido: $('fApelido').value.trim(),
+          placa: $('fPlaca').value.trim(),
+          tipo: $('fTipo').value.trim(),
+          status: $('fStatus').value.trim() || 'Regular',
+          marca: $('fMarca').value.trim(),
+          modelo: $('fModelo').value.trim(),
+          ano: $('fAno').value.trim(),
+          cor: $('fCor').value.trim(),
+          renavam: $('fRenavam').value.trim(),
+          chassi: $('fChassi').value.trim(),
+          proprietario: $('fProprietario').value.trim(),
+          obs: $('fObs').value.trim(),
+          ipva: $('fIpva').value,
+          licenciamento: $('fLicenciamento').value,
+          seguro: $('fSeguro').value,
+          cnh: $('fCnh').value,
+
 
