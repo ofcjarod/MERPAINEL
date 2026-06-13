@@ -1,7 +1,7 @@
 {
-  "name": "mer-seminovos",
+  "name": "mer-seminovos-crm",
   "version": "1.0.0",
-  "description": "Painel de documentacao de veiculos - MeR Seminovos",
+  "description": "CRM Pos-Venda - MeR Seminovos",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -9,7 +9,6 @@
   },
   "dependencies": {
     "express": "^4.18.2",
-    "multer": "^1.4.5-lts.1",
     "cors": "^2.8.5",
     "uuid": "^9.0.0"
   },
