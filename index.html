@@ -837,32 +837,36 @@
 
     <div class="sb-ac">
       <div class="lbl hid">Dados</div>
-      
-      <button class="ab" id="btnSincronizarXml" style="background: rgba(34,197,94,0.1); border-color: rgba(34,197,94,0.3); color: #22c55e;">
+
+      <!-- BOTÃO DE IMPORTAÇÃO ATIVADO (PLANILHAS OU XML) -->
+      <button class="ab" id="btnImportar" style="background: rgba(34,197,94,0.08); border-color: rgba(34,197,94,0.25); color: #22c55e;">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
         </svg>
-        <span class="hid">Puxar BoomSistemas</span>
+        <span class="hid">Importar Planilha / XML</span>
+      </button>
+      <input type="file" id="inputImportar" accept=".xls,.xlsx,.json,.xml" hidden>
+
+      <!-- BOTÃO DE EXPORTAÇÃO XML -->
+      <button class="ab" id="btnExportarXml" style="background: rgba(255,179,0,0.05); border-color: rgba(255,179,0,0.2);">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14,2 14,8 20,8"/>
+        </svg>
+        <span class="hid">Exportar .XML</span>
       </button>
 
+      <!-- BOTÃO DE EXPORTAÇÃO JSON (BACKUP) -->
       <button class="ab" id="btnExportar">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
           <polyline points="7 10 12 15 17 10"/>
           <line x1="12" y1="15" x2="12" y2="3"/>
         </svg>
-        <span class="hid">Exportar .JSON</span>
+        <span class="hid">Backup .JSON</span>
       </button>
-
-      <button class="ab" id="btnImportar">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-          <polyline points="17 8 12 3 7 8"/>
-          <line x1="12" y1="3" x2="12" y2="15"/>
-        </svg>
-        <span class="hid">Importar Arquivo</span>
-      </button>
-      <input type="file" id="inputImportar" accept=".xls,.xlsx,.json,.xml" hidden>
     </div>
 
     <div class="sb-ft">
@@ -885,6 +889,7 @@
       </div>
     </header>
 
+    <!-- DASHBOARD -->
     <section class="view on" id="view-dashboard">
       <div class="stats-g" id="statsGrid"></div>
 
@@ -906,6 +911,7 @@
       </div>
     </section>
 
+    <!-- VEICULOS -->
     <section class="view" id="view-veiculos">
       <div class="tlb">
         <div class="flt">
@@ -942,15 +948,18 @@
       <div id="veiculosGrid" class="grade"></div>
     </section>
 
+    <!-- VENCIMENTOS -->
     <section class="view" id="view-vencimentos">
       <div id="vencimentosWrap"></div>
     </section>
 
+    <!-- DOCUMENTOS -->
     <section class="view" id="view-documentos">
       <div id="documentosWrap"></div>
     </section>
   </main>
 
+  <!-- MODAL VEICULO -->
   <div class="ov" id="modalVeiculo">
     <div class="modal">
       <div class="modal-h">
@@ -1011,6 +1020,7 @@
     </div>
   </div>
 
+  <!-- MODAL DETALHE -->
   <div class="ov" id="modalDetalhe">
     <div class="modal">
       <div class="modal-h">
@@ -1032,7 +1042,6 @@
     'use strict';
 
     const KEY = 'mer_seminovos_db_v1';
-    const BOOM_XML_URL = 'https://boomsistemas.com.br/api/integration-api/xml/MeRSeminovos-AWzGABNM6WnpvBr';
 
     const $ = s => document.querySelector(s);
     const $$ = s => [...document.querySelectorAll(s)];
@@ -1619,15 +1628,18 @@
       }
     }
 
-    // --- PROCESSADOR DO ESTOQUE DA BOOM SISTEMAS ---
+    // --- LEITOR UNIVERSAL AUTOMÁTICO (PLANILHAS EXCEL OU XML DO ESTOQUE) ---
     function parseBoomXml(xmlString) {
       try {
         const parser = new DOMParser();
         const xmlDoc = parser.parseFromString(xmlString, "text/xml");
-        const veiculosTags = xmlDoc.getElementsByTagName("veiculo");
+        let veiculosTags = xmlDoc.getElementsByTagName("veiculo");
+
+        if (!veiculosTags.length) veiculosTags = xmlDoc.getElementsByTagName("item");
+        if (!veiculosTags.length) veiculosTags = xmlDoc.getElementsByTagName("vehicle");
 
         if (!veiculosTags.length) {
-          toast('Nenhum veículo mapeado dentro do XML da Boom', 'warn');
+          toast('Nenhum veículo estruturado no XML', 'warn');
           return;
         }
 
@@ -1641,25 +1653,23 @@
             return el && el.textContent ? el.textContent.trim() : '';
           };
 
-          // Mapeia os links de fotos se existirem na tag <fotos>
           const fotosArray = [];
-          const fotosContainer = vNode.getElementsByTagName("fotos")[0];
-          if (fotosContainer) {
-            const fotosLinks = fotosContainer.getElementsByTagName("foto");
-            for (let j = 0; j < Math.min(fotosLinks.length, 12); j++) {
-              if (fotosLinks[j].textContent) {
-                fotosArray.push({
-                  nome: `Foto ${j + 1}`,
-                  tipo: 'Foto',
-                  url: fotosLinks[j].textContent.trim()
-                });
-              }
+          const fotosContainer = vNode.getElementsByTagName("fotos")[0] || vNode;
+          const fotosLinks = fotosContainer.getElementsByTagName("foto") || fotosContainer.getElementsByTagName("url");
+          
+          for (let j = 0; j < Math.min(fotosLinks.length, 15); j++) {
+            if (fotosLinks[j] && fotosLinks[j].textContent) {
+              fotosArray.push({
+                nome: `Foto ${j + 1}`,
+                tipo: 'Foto',
+                url: fotosLinks[j].textContent.trim()
+              });
             }
           }
 
-          const marca = read('marca');
-          const modelo = read('modelo');
-          const versao = read('versao');
+          const marca = read('marca') || read('brand');
+          const modelo = read('modelo') || read('model');
+          const versao = read('versao') || read('version');
 
           novosVeiculos.push({
             id: uid(),
@@ -1667,61 +1677,39 @@
             atualizadoEm: new Date().toISOString(),
             documentos: fotosArray,
             apelido: versao ? `${modelo} ${versao}` : modelo || 'Veículo Sem Nome',
-            placa: read('placa'),
-            tipo: read('tipo') || 'Carro',
+            placa: read('placa') || read('plate'),
+            tipo: read('tipo') || read('type') || 'Carro',
             status: 'Regular',
             marca: marca,
             modelo: modelo,
-            ano: read('ano_fabricacao') || read('ano_modelo'),
-            cor: read('cor'),
+            ano: read('ano_fabricacao') || read('ano_modelo') || read('year'),
+            cor: read('cor') || read('color'),
             renavam: read('renavam'),
-            chassi: read('chassi'),
+            chassi: read('chassi') || read('vin'),
             proprietario: 'Estoque Central',
-            obs: read('observacao') || read('opcionais'),
+            obs: read('observacao') || read('opcionais') || read('descricao'),
             ipva:'', licenciamento:'', seguro:'', cnh:'', revisao:'', vistoria:''
           });
         }
 
-        // Mescla novos carros evitando duplicar pela mesma placa
         const placasExistentes = db.map(x => norm(x.placa)).filter(Boolean);
         const filtrados = novosVeiculos.filter(x => !placasExistentes.includes(norm(x.placa)));
 
         if (filtrados.length === 0) {
-          toast('Seu estoque já está 100% atualizado!', 'warn');
+          toast('Todos os carros deste XML já constam no painel', 'warn');
           return;
         }
 
         db = [...filtrados, ...db];
         saveDB();
         renderView(view);
-        toast(`${filtrados.length} novos carros importados da Boom Sistemas!`, 'ok');
-      } catch (err) {
-        console.error(err);
-        toast('Erro ao processar as informações do XML', 'err');
+        toast(`${filtrados.length} carros adicionados com sucesso!`, 'ok');
+      } catch {
+        toast('Erro de leitura nas tags do arquivo XML', 'err');
       }
     }
 
-    // Requisição HTTP via API usando proxy reverso livre para ignorar bloqueio de CORS local
-    function carregarEstoqueBoomRemoto() {
-      toast('Conectando à Boom Sistemas...', 'warn');
-      const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(BOOM_XML_URL);
-
-      fetch(proxyUrl)
-        .then(res => {
-          if (!res.ok) throw new Error();
-          return res.text();
-        })
-        .then(xmlData => {
-          parseBoomXml(xmlData);
-        })
-        .catch(() => {
-          toast('Erro de conexão ou CORS bloqueado', 'err');
-        });
-    }
-
     // EVENTOS DO SISTEMA
-    $('#btnSincronizarXml').addEventListener('click', carregarEstoqueBoomRemoto);
-
     $('#btnToggle').addEventListener('click', () => {
       $('#sidebar').classList.toggle('collapsed');
       $('#btnToggle').textContent = $('#sidebar').classList.contains('collapsed') ? '›' : '‹';
@@ -1800,12 +1788,9 @@
       renderVeiculos();
     });
 
-    // Exportar Backup JSON
+    // Exportar Banco de Dados Completo (.JSON)
     $('#btnExportar').addEventListener('click', () => {
-      if (!db.length) {
-        toast('Nenhum dado para exportar', 'warn');
-        return;
-      }
+      if (!db.length) { toast('Nenhum dado para backup', 'warn'); return; }
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db, null, 2));
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute("href", dataStr);
@@ -1813,10 +1798,54 @@
       document.body.appendChild(downloadAnchor);
       downloadAnchor.click();
       downloadAnchor.remove();
-      toast('Backup JSON exportado', 'ok');
+      toast('Backup JSON gerado', 'ok');
     });
 
-    // Importar Arquivo Local (.json, .xls, .xlsx ou arquivo de estoque .xml)
+    // Exportar Estoque Atual como arquivo XML (No formato Boom Sistemas)
+    $('#btnExportarXml').addEventListener('click', () => {
+      if (!db.length) { toast('Estoque vazio para conversão', 'warn'); return; }
+      
+      let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<estoque>\n';
+      
+      db.forEach(v => {
+        xml += '  <veiculo>\n';
+        xml += `    <placa>${esc(v.placa)}</placa>\n`;
+        xml += `    <marca>${esc(v.marca)}</marca>\n`;
+        xml += `    <modelo>${esc(v.modelo)}</modelo>\n`;
+        xml += `    <versao>${esc(v.apelido)}</versao>\n`;
+        xml += `    <tipo>${esc(v.tipo)}</tipo>\n`;
+        xml += `    <ano_fabricacao>${esc(v.ano)}</ano_fabricacao>\n`;
+        xml += `    <ano_modelo>${esc(v.ano)}</ano_modelo>\n`;
+        xml += `    <cor>${esc(v.cor)}</cor>\n`;
+        xml += `    <chassi>${esc(v.chassi)}</chassi>\n`;
+        xml += `    <renavam>${esc(v.renavam)}</renavam>\n`;
+        xml += `    <observacao>${esc(v.obs)}</observacao>\n`;
+        
+        const fotos = (v.documentos || []).filter(d => d.tipo === 'Foto' || d.url.startsWith('http'));
+        if (fotos.length) {
+          xml += '    <fotos>\n';
+          fotos.forEach(f => {
+            xml += `      <foto>${esc(f.url)}</foto>\n`;
+          });
+          xml += '    </fotos>\n';
+        }
+        
+        xml += '  </veiculo>\n';
+      });
+      
+      xml += '</estoque>';
+
+      const blob = new Blob([xml], { type: 'text/xml' });
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.href = URL.createObjectURL(blob);
+      downloadAnchor.setAttribute("download", `mer_seminovos_estoque_${new Date().toISOString().slice(0,10)}.xml`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      toast('Arquivo XML gerado!', 'ok');
+    });
+
+    // Importador Universal Unificado (Lê planilhas Excel, arquivos .xml ou backups .json)
     $('#btnImportar').addEventListener('click', () => $('#inputImportar').click());
     $('#inputImportar').addEventListener('change', e => {
       const file = e.target.files[0];
@@ -1834,7 +1863,7 @@
             const worksheet = workbook.Sheets[firstSheetName];
             const rows = XLSX.utils.sheet_to_json(worksheet);
 
-            if (!rows.length) { toast('A planilha está vazia', 'warn'); return; }
+            if (!rows.length) { toast('A planilha selecionada está vazia', 'warn'); return; }
 
             const pick = (row, aliases) => {
               const keys = Object.keys(row);
@@ -1856,8 +1885,8 @@
 
             db = [...importedVehicles, ...db];
             saveDB(); renderView(view);
-            toast(`${importedVehicles.length} carros importados do Excel!`, 'ok');
-          } catch { toast('Erro ao processar o Excel', 'err'); }
+            toast(`${importedVehicles.length} veículos carregados do Excel!`, 'ok');
+          } catch { toast('Falha ao interpretar arquivo do Excel', 'err'); }
         };
         reader.readAsArrayBuffer(file);
 
@@ -1873,9 +1902,9 @@
             const imported = JSON.parse(evt.target.result);
             if (Array.isArray(imported)) {
               db = imported; saveDB(); renderView(view);
-              toast('Backup JSON carregado', 'ok');
-            } else { toast('Formato JSON inválido', 'err'); }
-          } catch { toast('Erro ao ler backup JSON', 'err'); }
+              toast('Backup JSON restaurado', 'ok');
+            } else { toast('Arquivo de backup inválido', 'err'); }
+          } catch { toast('Erro ao descriptografar arquivo JSON', 'err'); }
         };
         reader.readAsText(file);
       }
