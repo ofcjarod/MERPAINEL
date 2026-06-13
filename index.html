@@ -101,7 +101,6 @@
       </div>
     </header>
 
-    <!-- DASHBOARD -->
     <section class="view active" id="view-dashboard">
       <div class="stats-grid" id="statsGrid"></div>
       <div class="dashboard-bottom">
@@ -119,7 +118,6 @@
       </div>
     </section>
 
-    <!-- VEICULOS -->
     <section class="view" id="view-veiculos">
       <div class="toolbar">
         <div class="filter-group">
@@ -154,18 +152,16 @@
       <div class="veiculos-grid" id="veiculosGrid"></div>
     </section>
 
-    <!-- VENCIMENTOS -->
     <section class="view" id="view-vencimentos">
       <div class="vencimentos-wrap" id="vencimentosWrap"></div>
     </section>
 
-    <!-- DOCUMENTOS -->
     <section class="view" id="view-documentos">
       <div class="documentos-wrap" id="documentosWrap"></div>
     </section>
   </main>
 
-  <!-- MODAL: NOVO / EDITAR -->
+  <!-- MODAL NOVO/EDITAR -->
   <div class="modal-overlay" id="modalVeiculo">
     <div class="modal">
       <div class="modal-header">
@@ -173,15 +169,15 @@
         <button class="close-btn" id="closeModal">&#10005;</button>
       </div>
       <div class="modal-body">
-        <form id="formVeiculo">
+        <form id="formVeiculo" onsubmit="return false">
           <input type="hidden" id="veiculoId"/>
           <div class="form-section">
             <h3>Identificacao</h3>
             <div class="form-grid">
-              <div class="form-group"><label>Apelido / Nome *</label><input type="text" id="fApelido" required placeholder="Ex: Gol Prata 2020"/></div>
-              <div class="form-group"><label>Placa *</label><input type="text" id="fPlaca" required placeholder="ABC-1234"/></div>
-              <div class="form-group"><label>Tipo *</label>
-                <select id="fTipo" required>
+              <div class="form-group"><label>Apelido / Nome</label><input type="text" id="fApelido" placeholder="Ex: Gol Prata 2020"/></div>
+              <div class="form-group"><label>Placa</label><input type="text" id="fPlaca" placeholder="ABC-1234"/></div>
+              <div class="form-group"><label>Tipo</label>
+                <select id="fTipo">
                   <option value="">Selecione</option>
                   <option>Carro</option><option>Moto</option>
                   <option>Caminhao</option><option>Van</option><option>Onibus</option>
@@ -209,24 +205,24 @@
           <div class="form-section">
             <h3>Datas Importantes</h3>
             <div class="form-grid">
-              <div class="form-group"><label>Vencimento IPVA</label><input type="date" id="fIpva"/></div>
+              <div class="form-group"><label>IPVA</label><input type="date" id="fIpva"/></div>
               <div class="form-group"><label>Licenciamento</label><input type="date" id="fLicenciamento"/></div>
               <div class="form-group"><label>Seguro</label><input type="date" id="fSeguro"/></div>
-              <div class="form-group"><label>CNH do Condutor</label><input type="date" id="fCnh"/></div>
+              <div class="form-group"><label>CNH</label><input type="date" id="fCnh"/></div>
               <div class="form-group"><label>Proxima Revisao</label><input type="date" id="fRevisao"/></div>
               <div class="form-group"><label>Vistoria</label><input type="date" id="fVistoria"/></div>
             </div>
           </div>
           <div class="form-actions">
             <button type="button" class="btn btn-ghost" id="cancelModal">Cancelar</button>
-            <button type="submit" class="btn btn-primary">Salvar Veiculo</button>
+            <button type="button" class="btn btn-primary" id="btnSalvar">Salvar Veiculo</button>
           </div>
         </form>
       </div>
     </div>
   </div>
 
-  <!-- MODAL: DETALHE -->
+  <!-- MODAL DETALHE -->
   <div class="modal-overlay" id="modalDetalhe">
     <div class="modal modal-lg">
       <div class="modal-header">
