@@ -1,2 +1,1 @@
-<img>https://imgur.com/yWvi2G5</img>
-<img src="[caminho-da-sua-imagem.jpg](https://imgur.com/yWvi2G5)" alt="Descrição da imagem">
+<blockquote class="imgur-embed-pub" lang="en" data-id="yWvi2G5"><a href="https://imgur.com/yWvi2G5">View post on imgur.com</a></blockquote><script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>
