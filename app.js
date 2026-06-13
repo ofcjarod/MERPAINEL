@@ -37,7 +37,6 @@ async function loadVeiculos() {
 // ══ EVENTS ════════════════════════════════════════════════════
 function bindEvents() {
 
-  // Nav sidebar
   document.querySelectorAll('.nav-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -46,54 +45,42 @@ function bindEvents() {
     });
   });
 
-  // Sidebar toggle
   document.getElementById('sidebarToggle').addEventListener('click', () => {
     document.getElementById('sidebar').classList.toggle('collapsed');
   });
 
-  // Novo veículo
   document.getElementById('btnNovoVeiculo').addEventListener('click', () => openModal());
-
-  // Grid / Lista
   document.getElementById('btnGrid').addEventListener('click', () => setListMode(false));
   document.getElementById('btnList').addEventListener('click', () => setListMode(true));
 
-  // Busca
   document.getElementById('searchInput').addEventListener('input', e => {
     searchQuery = e.target.value.toLowerCase();
     if (currentView === 'veiculos') renderVeiculos();
   });
 
-  // Filtros
   document.getElementById('filtroTipo').addEventListener('change', renderVeiculos);
   document.getElementById('filtroStatus').addEventListener('change', renderVeiculos);
 
-  // Form salvar veículo
   document.getElementById('formVeiculo').addEventListener('submit', saveVeiculo);
-
-  // Fechar modal veiculo
   document.getElementById('closeModal').addEventListener('click', closeModal);
   document.getElementById('cancelModal').addEventListener('click', closeModal);
   document.getElementById('modalVeiculo').addEventListener('click', e => {
     if (e.target === e.currentTarget) closeModal();
   });
 
-  // Fechar modal detalhe
   document.getElementById('closeDetalhe').addEventListener('click', closeDetalhe);
   document.getElementById('modalDetalhe').addEventListener('click', e => {
     if (e.target === e.currentTarget) closeDetalhe();
   });
 
-  // Exportar
-  document.getElementById('btnExportar').addEventListener('click', exportarDados);
+  document.getElementById('btnExportar').addEventListener('click', exportarXLS);
 
-  // Importar
   document.getElementById('btnImportar').addEventListener('click', () => {
     document.getElementById('inputImportar').click();
   });
   document.getElementById('inputImportar').addEventListener('change', e => {
     const file = e.target.files[0];
-    if (file) importarDados(file);
+    if (file) importarArquivo(file);
     e.target.value = '';
   });
 }
@@ -135,27 +122,26 @@ function renderDashboard() {
   ];
 
   document.getElementById('statsGrid').innerHTML = stats.map((s, i) => `
-    <div class="stat-card" style="animation-delay:${i * .07}s; border-top-color:${s.cor}">
+    <div class="stat-card" style="animation-delay:${i * .07}s;border-top-color:${s.cor}">
       <div class="stat-value" style="color:${s.cor}">${s.value}</div>
       <div class="stat-label">${s.label}</div>
-    </div>
-  `).join('');
+    </div>`).join('');
 
   renderAlertas();
   renderUltimos();
 }
 
 function renderAlertas() {
-  const hoje  = new Date();
-  const hoje0 = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
+  const hoje0 = new Date();
+  hoje0.setHours(0,0,0,0);
 
   const campos = [
-    { key: 'ipva',          label: 'IPVA'          },
-    { key: 'licenciamento', label: 'Licenciamento'  },
-    { key: 'seguro',        label: 'Seguro'         },
-    { key: 'cnh',           label: 'CNH'            },
-    { key: 'revisao',       label: 'Revisao'        },
-    { key: 'vistoria',      label: 'Vistoria'       }
+    { key: 'ipva',          label: 'IPVA'         },
+    { key: 'licenciamento', label: 'Licenciamento' },
+    { key: 'seguro',        label: 'Seguro'        },
+    { key: 'cnh',           label: 'CNH'           },
+    { key: 'revisao',       label: 'Revisao'       },
+    { key: 'vistoria',      label: 'Vistoria'      }
   ];
 
   const alertas = [];
@@ -164,13 +150,9 @@ function renderAlertas() {
       if (!v[c.key]) return;
       const d    = new Date(v[c.key] + 'T00:00:00');
       const dias = Math.ceil((d - hoje0) / 86400000);
-      if (dias <= 60) alertas.push({
-        veiculo: v.apelido || v.placa || 'Sem nome',
-        tipo: c.label, dias, data: d, id: v.id
-      });
+      if (dias <= 60) alertas.push({ veiculo: v.apelido || v.placa || 'Sem nome', tipo: c.label, dias, data: d, id: v.id });
     });
   });
-
   alertas.sort((a, b) => a.dias - b.dias);
 
   const countEl = document.getElementById('countAlertas');
@@ -181,12 +163,11 @@ function renderAlertas() {
     el.innerHTML = `<div class="empty-state" style="padding:24px"><p>Nenhum vencimento proximo nos proximos 60 dias</p></div>`;
     return;
   }
-
   el.innerHTML = alertas.slice(0, 7).map(a => {
-    const cor  = a.dias < 0 ? '#ef4444' : a.dias <= 15 ? '#f59e0b' : '#22c55e';
-    const txt  = a.dias < 0 ? `Vencido ha ${Math.abs(a.dias)}d` : a.dias === 0 ? 'Vence hoje' : `${a.dias}d restantes`;
+    const cor = a.dias < 0 ? '#ef4444' : a.dias <= 15 ? '#f59e0b' : '#22c55e';
+    const txt = a.dias < 0 ? `Vencido ha ${Math.abs(a.dias)}d` : a.dias === 0 ? 'Vence hoje' : `${a.dias}d restantes`;
     return `
-      <div class="alerta-item" onclick="openDetalhe('${a.id}')">
+      <div class="alerta-item" onclick="openDetalhe('${a.id}')" style="cursor:pointer">
         <div class="alerta-dot" style="background:${cor}"></div>
         <div class="alerta-info">
           <strong>${a.veiculo}</strong>
@@ -199,13 +180,11 @@ function renderAlertas() {
 
 function renderUltimos() {
   const sorted = [...veiculos].sort((a, b) => new Date(b.criadoEm) - new Date(a.criadoEm));
-  const el = document.getElementById('ultimosCadastros');
-
+  const el     = document.getElementById('ultimosCadastros');
   if (!sorted.length) {
     el.innerHTML = `<div class="empty-state" style="padding:24px"><p>Nenhum veiculo cadastrado ainda</p></div>`;
     return;
   }
-
   el.innerHTML = sorted.slice(0, 6).map(v => `
     <div class="alerta-item" style="cursor:pointer" onclick="openDetalhe('${v.id}')">
       <div style="width:34px;height:34px;background:rgba(255,179,0,.1);border:1px solid rgba(255,179,0,.2);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#ffb300;flex-shrink:0">
@@ -245,13 +224,13 @@ function renderVeiculos() {
       <div class="empty-state" style="grid-column:1/-1">
         ${svgCar(48)}
         <h3>Nenhum veiculo encontrado</h3>
-        <p>Cadastre seu primeiro veiculo clicando em "+ Novo Veiculo"</p>
+        <p>Cadastre clicando em "+ Novo Veiculo"</p>
       </div>`;
     return;
   }
 
   grid.innerHTML = filtered.map((v, i) => {
-    const proxVenc = proximoVencimento(v);
+    const pv = proximoVencimento(v);
     return `
       <div class="veiculo-card" style="animation-delay:${i * .05}s" onclick="openDetalhe('${v.id}')">
         <div class="veiculo-card-top">
@@ -265,17 +244,13 @@ function renderVeiculos() {
           ${v.marca  ? `<span><strong>${v.marca}</strong> ${v.modelo || ''} ${v.ano || ''}</span>` : ''}
           ${v.cor    ? `<span>Cor: <strong>${v.cor}</strong></span>` : ''}
           ${v.proprietario ? `<span>Prop: <strong>${v.proprietario}</strong></span>` : ''}
-          ${proxVenc ? `<span style="color:${proxVenc.cor}">${proxVenc.label}: ${proxVenc.txt}</span>` : ''}
+          ${pv       ? `<span style="color:${pv.cor}">${pv.label}: ${pv.txt}</span>` : ''}
         </div>
         <div class="veiculo-footer">
           <span class="status-badge status-${v.status || 'Regular'}">${v.status || 'Regular'}</span>
           <div class="veiculo-actions" onclick="event.stopPropagation()">
-            <button class="icon-btn btn-sm" title="Editar" onclick="openModal('${v.id}')">
-              ${svgEdit()}
-            </button>
-            <button class="icon-btn btn-sm" title="Deletar" onclick="deletarVeiculo('${v.id}')">
-              ${svgTrash()}
-            </button>
+            <button class="icon-btn btn-sm" title="Editar" onclick="openModal('${v.id}')">${svgEdit()}</button>
+            <button class="icon-btn btn-sm" title="Deletar" onclick="deletarVeiculo('${v.id}')">${svgTrash()}</button>
           </div>
         </div>
       </div>`;
@@ -284,21 +259,21 @@ function renderVeiculos() {
 
 function proximoVencimento(v) {
   const campos = [
-    { key: 'ipva',          label: 'IPVA'         },
-    { key: 'licenciamento', label: 'Licenciamento' },
-    { key: 'seguro',        label: 'Seguro'        },
-    { key: 'cnh',           label: 'CNH'           },
-    { key: 'revisao',       label: 'Revisao'       },
-    { key: 'vistoria',      label: 'Vistoria'      }
+    { key: 'ipva', label: 'IPVA' }, { key: 'licenciamento', label: 'Licenciamento' },
+    { key: 'seguro', label: 'Seguro' }, { key: 'cnh', label: 'CNH' },
+    { key: 'revisao', label: 'Revisao' }, { key: 'vistoria', label: 'Vistoria' }
   ];
-  const hoje0 = new Date();
-  hoje0.setHours(0,0,0,0);
+  const hoje0 = new Date(); hoje0.setHours(0,0,0,0);
   let menor = null;
   campos.forEach(c => {
     if (!v[c.key]) return;
     const d    = new Date(v[c.key] + 'T00:00:00');
     const dias = Math.ceil((d - hoje0) / 86400000);
-    if (!menor || dias < menor.dias) menor = { label: c.label, dias, cor: dias < 0 ? '#ef4444' : dias <= 15 ? '#f59e0b' : '#22c55e', txt: dias < 0 ? `Vencido ${Math.abs(dias)}d` : `${dias}d` };
+    if (!menor || dias < menor.dias) menor = {
+      label: c.label, dias,
+      cor: dias < 0 ? '#ef4444' : dias <= 15 ? '#f59e0b' : '#22c55e',
+      txt: dias < 0 ? `Vencido ${Math.abs(dias)}d` : `${dias}d`
+    };
   });
   return menor;
 }
@@ -306,16 +281,11 @@ function proximoVencimento(v) {
 // ══ VENCIMENTOS ══════════════════════════════════════════════
 function renderVencimentos() {
   const campos = [
-    { key: 'ipva',          label: 'IPVA'         },
-    { key: 'licenciamento', label: 'Licenciamento' },
-    { key: 'seguro',        label: 'Seguro'        },
-    { key: 'cnh',           label: 'CNH'           },
-    { key: 'revisao',       label: 'Revisao'       },
-    { key: 'vistoria',      label: 'Vistoria'      }
+    { key: 'ipva', label: 'IPVA' }, { key: 'licenciamento', label: 'Licenciamento' },
+    { key: 'seguro', label: 'Seguro' }, { key: 'cnh', label: 'CNH' },
+    { key: 'revisao', label: 'Revisao' }, { key: 'vistoria', label: 'Vistoria' }
   ];
-
-  const hoje0 = new Date();
-  hoje0.setHours(0,0,0,0);
+  const hoje0 = new Date(); hoje0.setHours(0,0,0,0);
   const rows  = [];
 
   veiculos.forEach(v => {
@@ -326,22 +296,19 @@ function renderVencimentos() {
       rows.push({ v, c, d, dias });
     });
   });
-
   rows.sort((a, b) => a.dias - b.dias);
 
   const el = document.getElementById('vencimentosWrap');
-
   if (!rows.length) {
     el.innerHTML = `<div class="empty-state">${svgCal(48)}<h3>Nenhuma data cadastrada</h3><p>Adicione datas nos veiculos para acompanhar aqui</p></div>`;
     return;
   }
-
   el.innerHTML = rows.map((r, i) => {
-    const cor   = r.dias < 0 ? '#ef4444' : r.dias <= 15 ? '#f59e0b' : '#22c55e';
-    const cls   = r.dias < 0 ? 'venc-danger' : r.dias <= 15 ? 'venc-warning' : 'venc-ok';
-    const txt   = r.dias < 0 ? `Vencido ha ${Math.abs(r.dias)} dias` : r.dias === 0 ? 'Vence hoje' : `${r.dias} dias restantes`;
+    const cor = r.dias < 0 ? '#ef4444' : r.dias <= 15 ? '#f59e0b' : '#22c55e';
+    const cls = r.dias < 0 ? 'venc-danger' : r.dias <= 15 ? 'venc-warning' : 'venc-ok';
+    const txt = r.dias < 0 ? `Vencido ha ${Math.abs(r.dias)} dias` : r.dias === 0 ? 'Vence hoje' : `${r.dias} dias restantes`;
     return `
-      <div class="venc-row ${cls}" style="animation-delay:${i * .04}s" onclick="openDetalhe('${r.v.id}')">
+      <div class="venc-row ${cls}" style="animation-delay:${i * .04}s;cursor:pointer" onclick="openDetalhe('${r.v.id}')">
         <div>
           <div class="venc-name">${r.v.apelido || 'Sem nome'}</div>
           <div class="venc-tipo">${r.v.placa || ''} — ${r.v.marca || ''} ${r.v.modelo || ''}</div>
@@ -355,15 +322,12 @@ function renderVencimentos() {
 
 // ══ DOCUMENTOS ═══════════════════════════════════════════════
 function renderDocumentos() {
-  const el = document.getElementById('documentosWrap');
-
+  const el      = document.getElementById('documentosWrap');
   const comDocs = veiculos.filter(v => (v.documentos || []).length > 0);
-
   if (!comDocs.length) {
-    el.innerHTML = `<div class="empty-state">${svgDoc(48)}<h3>Nenhum documento enviado</h3><p>Abra um veiculo e envie documentos na aba de detalhes</p></div>`;
+    el.innerHTML = `<div class="empty-state">${svgDoc(48)}<h3>Nenhum documento enviado</h3><p>Abra um veiculo e envie documentos nos detalhes</p></div>`;
     return;
   }
-
   el.innerHTML = comDocs.map(v => `
     <div class="doc-section">
       <div class="doc-section-header">
@@ -373,7 +337,7 @@ function renderDocumentos() {
       <div class="doc-list">
         ${v.documentos.map(d => `
           <div class="doc-item">
-            <div class="doc-icon">${svgDoc(16)}</div>
+            <div class="doc-icon">${svgDoc(15)}</div>
             <div class="doc-info">
               <strong>${d.nome}</strong>
               <small>${d.tipo} — ${formatBytes(d.tamanho)} — ${formatDate(new Date(d.criadoEm))}</small>
@@ -387,38 +351,36 @@ function renderDocumentos() {
     </div>`).join('');
 }
 
-// ══ MODAL VEICULO — ABRIR ════════════════════════════════════
+// ══ MODAL VEICULO ═════════════════════════════════════════════
 function openModal(id = null) {
   editId = id;
-  const form  = document.getElementById('formVeiculo');
-  const title = document.getElementById('modalTitle');
-
-  form.reset();
+  document.getElementById('formVeiculo').reset();
   document.getElementById('veiculoId').value = '';
+  const title = document.getElementById('modalTitle');
 
   if (id) {
     const v = veiculos.find(x => x.id === id);
     if (!v) return;
     title.textContent = 'Editar Veiculo';
-    document.getElementById('veiculoId').value    = v.id;
-    document.getElementById('fApelido').value     = v.apelido     || '';
-    document.getElementById('fPlaca').value       = v.placa       || '';
-    document.getElementById('fTipo').value        = v.tipo        || '';
-    document.getElementById('fStatus').value      = v.status      || 'Regular';
-    document.getElementById('fMarca').value       = v.marca       || '';
-    document.getElementById('fModelo').value      = v.modelo      || '';
-    document.getElementById('fAno').value         = v.ano         || '';
-    document.getElementById('fCor').value         = v.cor         || '';
-    document.getElementById('fRenavam').value     = v.renavam     || '';
-    document.getElementById('fChassi').value      = v.chassi      || '';
-    document.getElementById('fProprietario').value= v.proprietario|| '';
-    document.getElementById('fObs').value         = v.obs         || '';
-    document.getElementById('fIpva').value        = v.ipva        || '';
-    document.getElementById('fLicenciamento').value = v.licenciamento || '';
-    document.getElementById('fSeguro').value      = v.seguro      || '';
-    document.getElementById('fCnh').value         = v.cnh         || '';
-    document.getElementById('fRevisao').value     = v.revisao     || '';
-    document.getElementById('fVistoria').value    = v.vistoria    || '';
+    document.getElementById('veiculoId').value     = v.id;
+    document.getElementById('fApelido').value      = v.apelido      || '';
+    document.getElementById('fPlaca').value        = v.placa        || '';
+    document.getElementById('fTipo').value         = v.tipo         || '';
+    document.getElementById('fStatus').value       = v.status       || 'Regular';
+    document.getElementById('fMarca').value        = v.marca        || '';
+    document.getElementById('fModelo').value       = v.modelo       || '';
+    document.getElementById('fAno').value          = v.ano          || '';
+    document.getElementById('fCor').value          = v.cor          || '';
+    document.getElementById('fRenavam').value      = v.renavam      || '';
+    document.getElementById('fChassi').value       = v.chassi       || '';
+    document.getElementById('fProprietario').value = v.proprietario || '';
+    document.getElementById('fObs').value          = v.obs          || '';
+    document.getElementById('fIpva').value         = v.ipva         || '';
+    document.getElementById('fLicenciamento').value= v.licenciamento|| '';
+    document.getElementById('fSeguro').value       = v.seguro       || '';
+    document.getElementById('fCnh').value          = v.cnh          || '';
+    document.getElementById('fRevisao').value      = v.revisao      || '';
+    document.getElementById('fVistoria').value     = v.vistoria     || '';
   } else {
     title.textContent = 'Novo Veiculo';
   }
@@ -434,26 +396,25 @@ function closeModal() {
 // ══ SALVAR VEICULO ════════════════════════════════════════════
 async function saveVeiculo(e) {
   e.preventDefault();
-
   const dados = {
-    apelido:       document.getElementById('fApelido').value.trim(),
-    placa:         document.getElementById('fPlaca').value.trim().toUpperCase(),
-    tipo:          document.getElementById('fTipo').value,
-    status:        document.getElementById('fStatus').value,
-    marca:         document.getElementById('fMarca').value.trim(),
-    modelo:        document.getElementById('fModelo').value.trim(),
-    ano:           document.getElementById('fAno').value,
-    cor:           document.getElementById('fCor').value.trim(),
-    renavam:       document.getElementById('fRenavam').value.trim(),
-    chassi:        document.getElementById('fChassi').value.trim(),
-    proprietario:  document.getElementById('fProprietario').value.trim(),
-    obs:           document.getElementById('fObs').value.trim(),
-    ipva:          document.getElementById('fIpva').value,
-    licenciamento: document.getElementById('fLicenciamento').value,
-    seguro:        document.getElementById('fSeguro').value,
-    cnh:           document.getElementById('fCnh').value,
-    revisao:       document.getElementById('fRevisao').value,
-    vistoria:      document.getElementById('fVistoria').value
+    apelido:        document.getElementById('fApelido').value.trim(),
+    placa:          document.getElementById('fPlaca').value.trim().toUpperCase(),
+    tipo:           document.getElementById('fTipo').value,
+    status:         document.getElementById('fStatus').value,
+    marca:          document.getElementById('fMarca').value.trim(),
+    modelo:         document.getElementById('fModelo').value.trim(),
+    ano:            document.getElementById('fAno').value,
+    cor:            document.getElementById('fCor').value.trim(),
+    renavam:        document.getElementById('fRenavam').value.trim(),
+    chassi:         document.getElementById('fChassi').value.trim(),
+    proprietario:   document.getElementById('fProprietario').value.trim(),
+    obs:            document.getElementById('fObs').value.trim(),
+    ipva:           document.getElementById('fIpva').value,
+    licenciamento:  document.getElementById('fLicenciamento').value,
+    seguro:         document.getElementById('fSeguro').value,
+    cnh:            document.getElementById('fCnh').value,
+    revisao:        document.getElementById('fRevisao').value,
+    vistoria:       document.getElementById('fVistoria').value
   };
 
   try {
@@ -487,7 +448,7 @@ async function deletarVeiculo(id) {
   }
 }
 
-// ══ MODAL DETALHE — ABRIR ════════════════════════════════════
+// ══ MODAL DETALHE ═════════════════════════════════════════════
 function openDetalhe(id) {
   detalheId = id;
   const v   = veiculos.find(x => x.id === id);
@@ -496,29 +457,20 @@ function openDetalhe(id) {
   document.getElementById('detalheTitle').textContent = v.apelido || 'Detalhe';
 
   const campos = [
-    { key: 'ipva',          label: 'IPVA'         },
-    { key: 'licenciamento', label: 'Licenciamento' },
-    { key: 'seguro',        label: 'Seguro'        },
-    { key: 'cnh',           label: 'CNH'           },
-    { key: 'revisao',       label: 'Revisao'       },
-    { key: 'vistoria',      label: 'Vistoria'      }
+    { key: 'ipva', label: 'IPVA' }, { key: 'licenciamento', label: 'Licenciamento' },
+    { key: 'seguro', label: 'Seguro' }, { key: 'cnh', label: 'CNH' },
+    { key: 'revisao', label: 'Revisao' }, { key: 'vistoria', label: 'Vistoria' }
   ];
-
-  const hoje0 = new Date();
-  hoje0.setHours(0,0,0,0);
+  const hoje0 = new Date(); hoje0.setHours(0,0,0,0);
 
   const datasHTML = campos.map(c => {
-    if (!v[c.key]) return `
-      <div class="data-pill">
-        <label>${c.label}</label>
-        <span style="color:var(--text-muted)">—</span>
-      </div>`;
+    if (!v[c.key]) return `<div class="data-pill"><label>${c.label}</label><span style="color:var(--text-muted)">—</span></div>`;
     const d    = new Date(v[c.key] + 'T00:00:00');
     const dias = Math.ceil((d - hoje0) / 86400000);
     const cor  = dias < 0 ? '#ef4444' : dias <= 15 ? '#f59e0b' : '#22c55e';
     const sub  = dias < 0 ? `Vencido ${Math.abs(dias)}d` : dias === 0 ? 'Hoje' : `${dias}d`;
     return `
-      <div class="data-pill" style="border-color:${cor}33">
+      <div class="data-pill" style="border-color:${cor}44">
         <label>${c.label}</label>
         <span style="color:${cor}">${formatDate(d)}</span>
         <small style="color:${cor};font-size:10px">${sub}</small>
@@ -526,7 +478,7 @@ function openDetalhe(id) {
   }).join('');
 
   const docsHTML = (v.documentos || []).length
-    ? (v.documentos || []).map(d => `
+    ? v.documentos.map(d => `
         <div class="doc-item">
           <div class="doc-icon">${svgDoc(15)}</div>
           <div class="doc-info">
@@ -554,50 +506,34 @@ function openDetalhe(id) {
         <div class="detalhe-item"><label>Proprietario</label><span>${v.proprietario || '—'}</span></div>
         <div class="detalhe-item"><label>Status</label><span class="status-badge status-${v.status || 'Regular'}">${v.status || 'Regular'}</span></div>
         <div class="detalhe-item"><label>Cadastrado em</label><span>${v.criadoEm ? formatDate(new Date(v.criadoEm)) : '—'}</span></div>
-        ${v.obs ? `<div class="detalhe-item"><label>Observacoes</label><span style="font-size:13px;color:var(--text-muted)">${v.obs}</span></div>` : ''}
+        ${v.obs ? `<div class="detalhe-item"><label>Observacoes</label><span style="font-size:13px;color:var(--text-sub)">${v.obs}</span></div>` : ''}
       </div>
     </div>
 
-    <div class="form-section">
-      <h3>Datas e Vencimentos</h3>
+    <div class="form-section"><h3>Datas e Vencimentos</h3>
       <div class="datas-grid">${datasHTML}</div>
     </div>
 
     <div class="docs-section">
-      <div class="docs-section-title">
-        <span>Documentos (${(v.documentos || []).length})</span>
-      </div>
-
+      <div class="docs-section-title"><span>Documentos (${(v.documentos || []).length})</span></div>
       <form class="upload-form" onsubmit="uploadDoc(event,'${v.id}')">
-        <div style="display:grid;grid-template-columns:1fr 140px 140px auto;gap:8px;align-items:end;margin-bottom:12px">
-          <div class="form-group">
-            <label>Nome do documento</label>
-            <input type="text" id="uploadNome" placeholder="Ex: CRLV 2025"/>
-          </div>
-          <div class="form-group">
-            <label>Tipo</label>
+        <div style="display:grid;grid-template-columns:1fr 130px 160px auto;gap:8px;align-items:end;margin-bottom:12px">
+          <div class="form-group"><label>Nome</label><input type="text" id="uploadNome" placeholder="Ex: CRLV 2025"/></div>
+          <div class="form-group"><label>Tipo</label>
             <select id="uploadTipo">
-              <option>CRLV</option>
-              <option>IPVA</option>
-              <option>Seguro</option>
-              <option>CNH</option>
-              <option>Laudo</option>
-              <option>Outro</option>
+              <option>CRLV</option><option>IPVA</option><option>Seguro</option>
+              <option>CNH</option><option>Laudo</option><option>Outro</option>
             </select>
           </div>
-          <div class="form-group">
-            <label>Arquivo</label>
-            <input type="file" id="uploadFile" accept=".pdf,.jpg,.jpeg,.png,.webp" required/>
-          </div>
-          <button type="submit" class="btn btn-primary" style="margin-bottom:0">Enviar</button>
+          <div class="form-group"><label>Arquivo</label><input type="file" id="uploadFile" accept=".pdf,.jpg,.jpeg,.png,.webp" required/></div>
+          <button type="submit" class="btn btn-primary">Enviar</button>
         </div>
       </form>
-
       <div id="docListDetalhe">${docsHTML}</div>
     </div>
 
     <div style="display:flex;gap:10px;justify-content:flex-end;padding-top:16px;border-top:1px solid var(--border);margin-top:8px">
-      <button class="btn btn-ghost" onclick="openModal('${v.id}')">Editar Veiculo</button>
+      <button class="btn btn-ghost" onclick="openModal('${v.id}')">Editar</button>
       <button class="btn btn-danger" onclick="deletarVeiculo('${v.id}')">Deletar</button>
     </div>`;
 
@@ -612,10 +548,9 @@ function closeDetalhe() {
 // ══ UPLOAD DOCUMENTO ══════════════════════════════════════════
 async function uploadDoc(e, veiculoId) {
   e.preventDefault();
-  const nome   = document.getElementById('uploadNome').value.trim();
-  const tipo   = document.getElementById('uploadTipo').value;
-  const file   = document.getElementById('uploadFile').files[0];
-
+  const nome = document.getElementById('uploadNome').value.trim();
+  const tipo = document.getElementById('uploadTipo').value;
+  const file = document.getElementById('uploadFile').files[0];
   if (!file) { toast('Selecione um arquivo', 'warn'); return; }
 
   const form = new FormData();
@@ -656,40 +591,150 @@ function setListMode(val) {
   if (currentView === 'veiculos') renderVeiculos();
 }
 
-// ══ EXPORT ════════════════════════════════════════════════════
-async function exportarDados() {
+// ══ EXPORTAR XLS ══════════════════════════════════════════════
+async function exportarXLS() {
   try {
     const dados = await api('GET', '/veiculos');
-    const blob  = new Blob([JSON.stringify(dados, null, 2)], { type: 'application/json' });
-    const url   = URL.createObjectURL(blob);
-    const a     = document.createElement('a');
-    a.href      = url;
-    a.download  = `MeR_Seminovos_${new Date().toISOString().slice(0,10)}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-    toast('Exportacao concluida', 'success');
+
+    const linhas = dados.map(v => ({
+      'Apelido':          v.apelido        || '',
+      'Placa':            v.placa          || '',
+      'Tipo':             v.tipo           || '',
+      'Status':           v.status         || '',
+      'Marca':            v.marca          || '',
+      'Modelo':           v.modelo         || '',
+      'Ano':              v.ano            || '',
+      'Cor':              v.cor            || '',
+      'RENAVAM':          v.renavam        || '',
+      'Chassi':           v.chassi         || '',
+      'Proprietario':     v.proprietario   || '',
+      'Observacoes':      v.obs            || '',
+      'Venc. IPVA':       v.ipva           || '',
+      'Venc. Licenciamento': v.licenciamento || '',
+      'Venc. Seguro':     v.seguro         || '',
+      'Venc. CNH':        v.cnh            || '',
+      'Proxima Revisao':  v.revisao        || '',
+      'Vistoria':         v.vistoria       || '',
+      'Qtd Documentos':   (v.documentos || []).length,
+      'Cadastrado em':    v.criadoEm ? new Date(v.criadoEm).toLocaleDateString('pt-BR') : ''
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(linhas);
+
+    // Largura das colunas
+    ws['!cols'] = [
+      { wch: 22 }, { wch: 12 }, { wch: 12 }, { wch: 12 },
+      { wch: 16 }, { wch: 16 }, { wch: 8  }, { wch: 12 },
+      { wch: 16 }, { wch: 24 }, { wch: 22 }, { wch: 28 },
+      { wch: 16 }, { wch: 20 }, { wch: 14 }, { wch: 12 },
+      { wch: 16 }, { wch: 12 }, { wch: 14 }, { wch: 16 }
+    ];
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Veiculos');
+
+    const nome = `MeR_Seminovos_${new Date().toISOString().slice(0,10)}.xlsx`;
+    XLSX.writeFile(wb, nome);
+
+    toast('Exportado para .XLS com sucesso', 'success');
   } catch (err) {
     toast('Erro ao exportar: ' + err.message, 'error');
   }
 }
 
-// ══ IMPORT ════════════════════════════════════════════════════
-async function importarDados(file) {
-  const reader = new FileReader();
-  reader.onload = async e => {
-    try {
-      const json = JSON.parse(e.target.result);
-      const arr  = Array.isArray(json) ? json : (Array.isArray(json.veiculos) ? json.veiculos : null);
-      if (!arr) throw new Error('Formato invalido');
-      await api('POST', '/veiculos/replace', arr);
-      await loadVeiculos();
-      renderView(currentView);
-      toast(`${arr.length} veiculos importados`, 'success');
-    } catch (err) {
-      toast('Erro ao importar: ' + err.message, 'error');
+// ══ IMPORTAR XLS / XLSX / JSON ════════════════════════════════
+async function importarArquivo(file) {
+  try {
+    const ext = file.name.split('.').pop().toLowerCase();
+    let arr   = [];
+
+    if (ext === 'json') {
+      const text = await file.text();
+      const data = JSON.parse(text);
+      arr = Array.isArray(data) ? data : (Array.isArray(data.veiculos) ? data.veiculos : []);
+      if (!arr.length) throw new Error('Nenhum registro no JSON');
     }
+
+    if (ext === 'xls' || ext === 'xlsx') {
+      const buffer   = await file.arrayBuffer();
+      const workbook = XLSX.read(buffer, { type: 'array', cellDates: true });
+      const sheet    = workbook.Sheets[workbook.SheetNames[0]];
+      const rows     = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+
+      if (!rows.length) throw new Error('Planilha vazia');
+
+      arr = rows.map(row => mapRowParaVeiculo(row));
+    }
+
+    if (!arr.length) throw new Error('Nenhum dado encontrado');
+
+    await api('POST', '/veiculos/replace', arr);
+    await loadVeiculos();
+    renderView(currentView);
+    toast(`${arr.length} veiculos importados com sucesso`, 'success');
+
+  } catch (err) {
+    toast('Erro ao importar: ' + err.message, 'error');
+  }
+}
+
+// ══ MAPEAMENTO DE COLUNAS XLS → VEICULO ══════════════════════
+function pick(row, aliases) {
+  const keys = Object.keys(row);
+  for (const alias of aliases) {
+    const found = keys.find(k =>
+      k.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'') ===
+      alias.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    );
+    if (found !== undefined) return String(row[found]).trim();
+  }
+  return '';
+}
+
+function parseData(val) {
+  if (!val) return '';
+  if (val instanceof Date && !isNaN(val)) return val.toISOString().slice(0,10);
+  if (typeof val === 'number') {
+    const info = XLSX.SSF.parse_date_code(val);
+    if (!info) return '';
+    return `${String(info.y).padStart(4,'0')}-${String(info.m).padStart(2,'0')}-${String(info.d).padStart(2,'0')}`;
+  }
+  const s  = String(val).trim();
+  const br = s.match(/
+^
+(\d{2})\/(\d{2})\/(\d{4})
+$
+/);
+  if (br) return `${br[3]}-${br[2]}-${br[1]}`;
+  const d  = new Date(s);
+  return isNaN(d) ? '' : d.toISOString().slice(0,10);
+}
+
+function mapRowParaVeiculo(row) {
+  return {
+    id:           crypto.randomUUID(),
+    criadoEm:     new Date().toISOString(),
+    atualizadoEm: new Date().toISOString(),
+    documentos:   [],
+    apelido:       pick(row, ['Apelido','Nome','Apelido / Nome']),
+    placa:         pick(row, ['Placa']),
+    tipo:          pick(row, ['Tipo']),
+    status:        pick(row, ['Status']) || 'Regular',
+    marca:         pick(row, ['Marca']),
+    modelo:        pick(row, ['Modelo']),
+    ano:           pick(row, ['Ano']),
+    cor:           pick(row, ['Cor']),
+    renavam:       pick(row, ['RENAVAM','Renavam']),
+    chassi:        pick(row, ['Chassi']),
+    proprietario:  pick(row, ['Proprietario','Proprietário']),
+    obs:           pick(row, ['Observacoes','Observações','Obs']),
+    ipva:          parseData(pick(row, ['Venc. IPVA','IPVA','Vencimento IPVA'])),
+    licenciamento: parseData(pick(row, ['Venc. Licenciamento','Licenciamento'])),
+    seguro:        parseData(pick(row, ['Venc. Seguro','Seguro'])),
+    cnh:           parseData(pick(row, ['Venc. CNH','CNH'])),
+    revisao:       parseData(pick(row, ['Proxima Revisao','Revisao','Revisão'])),
+    vistoria:      parseData(pick(row, ['Vistoria']))
   };
-  reader.readAsText(file);
 }
 
 // ══ TOAST ═════════════════════════════════════════════════════
@@ -699,7 +744,7 @@ function toast(msg, tipo = 'success') {
   const el    = document.createElement('div');
   el.className = `toast ${tipo}`;
   el.innerHTML = `
-    <div style="width:8px;height:8px;border-radius:50%;background:${cores[tipo] || cores.success};flex-shrink:0"></div>
+    <div style="width:8px;height:8px;border-radius:50%;background:${cores[tipo]||cores.success};flex-shrink:0"></div>
     <span>${msg}</span>`;
   wrap.appendChild(el);
   setTimeout(() => el.remove(), 3500);
@@ -714,14 +759,14 @@ function formatDate(d) {
 
 function formatBytes(b) {
   if (!b) return '—';
-  if (b < 1024)       return b + ' B';
-  if (b < 1048576)    return (b / 1024).toFixed(1) + ' KB';
+  if (b < 1024)    return b + ' B';
+  if (b < 1048576) return (b / 1024).toFixed(1) + ' KB';
   return (b / 1048576).toFixed(1) + ' MB';
 }
 
 // ══ SVG ICONS ════════════════════════════════════════════════
-function svgCar(size = 20) {
-  return `<svg width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+function svgCar(s = 20) {
+  return `<svg width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
     <path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3"/>
     <rect x="9" y="11" width="14" height="10" rx="2"/>
     <circle cx="12" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
@@ -741,14 +786,14 @@ function svgTrash() {
     <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
   </svg>`;
 }
-function svgDoc(size = 20) {
-  return `<svg width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+function svgDoc(s = 20) {
+  return `<svg width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
     <polyline points="14,2 14,8 20,8"/>
   </svg>`;
 }
-function svgCal(size = 20) {
-  return `<svg width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+function svgCal(s = 20) {
+  return `<svg width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
     <rect x="3" y="4" width="18" height="18" rx="2"/>
     <path d="M16 2v4M8 2v4M3 10h18"/>
   </svg>`;
