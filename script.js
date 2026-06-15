@@ -11,12 +11,14 @@ function salvar() {
         id: Date.now(),
         modelo: document.getElementById('mModelo').value,
         placa: document.getElementById('mPlaca').value.toUpperCase(),
+        chassi: document.getElementById('mChassi').value,
+        renavam: document.getElementById('mRenavam').value,
         ipva: document.getElementById('mIpva').value,
         valor: document.getElementById('mValor').value
     };
     db.push(v);
     localStorage.setItem('mer_db', JSON.stringify(db));
-    alert('Cadastrado! ✨');
+    alert('Cadastrado com sucesso! ✨');
     location.reload();
 }
 
