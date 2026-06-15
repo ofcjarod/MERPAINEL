@@ -1,60 +1,42 @@
 let db = JSON.parse(localStorage.getItem('mer_db') || '[]');
 
 function view(id) {
-    document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
-    document.getElementById(id).style.display = 'block';
-    if(id === 'estoque') render();
+    const app = document.getElementById('app');
+    if(id === 'cadastro') {
+        app.innerHTML = `<div class="card">
+            <h2>Cadastrar Veículo</h2>
+            <input type="text" id="modelo" placeholder="Modelo">
+            <input type="text" id="placa" placeholder="Placa">
+            <button class="btn-main" onclick="salvar()">Salvar</button>
+        </div>`;
+    } else {
+        app.innerHTML = `<div class="grid" id="lista"></div>`;
+        render();
+    }
 }
 
 function salvar() {
-    const editIndex = parseInt(document.getElementById('editIndex').value);
-    const v = {
-        modelo: document.getElementById('mModelo').value,
-        placa: document.getElementById('mPlaca').value.toUpperCase(),
-        chassi: document.getElementById('mChassi').value,
-        renavam: document.getElementById('mRenavam').value,
-        telAtual: document.getElementById('mTelAtual').value,
-        telAnterior: document.getElementById('mTelAnterior').value,
-        ipva: document.getElementById('mIpva').value,
-        multa: document.getElementById('mMulta').value,
-        valor: document.getElementById('mValor').value
-    };
-    if(editIndex > -1) db[editIndex] = v; else db.push(v);
+    const v = { id: Date.now(), modelo: document.getElementById('modelo').value, placa: document.getElementById('placa').value.toUpperCase() };
+    db.push(v);
     localStorage.setItem('mer_db', JSON.stringify(db));
-    alert('Operação realizada!');
-    location.reload();
+    alert('Salvo com sucesso!');
+    view('estoque');
 }
 
 function render() {
     document.getElementById('lista').innerHTML = db.map((v, i) => `
-        <div class="card ${v.ipva === 'Atrasado' || v.multa === 'Pendente' ? 'alerta' : ''}">
+        <div class="card">
             <h3>${v.modelo}</h3>
             <p>Placa: ${v.placa}</p>
-            <a class="btn-wa" href="https://wa.me/55${v.telAtual}" target="_blank">📞 Dono Atual</a>
-            <a class="btn-wa" href="https://wa.me/55${v.telAnterior}" target="_blank">📞 Ex-Dono</a>
-            <br><button onclick="editar(${i})">✏️ Editar</button>
-            <button onclick="excluir(${i})">🗑️ Excluir</button>
+            <button class="nav-btn" onclick="excluir(${i})">Remover</button>
         </div>
     `).join('');
 }
 
-function editar(i) {
-    const v = db[i];
-    document.getElementById('editIndex').value = i;
-    document.getElementById('mModelo').value = v.modelo;
-    document.getElementById('mPlaca').value = v.placa;
-    view('cadastro');
-}
-
-function excluir(i) {
-    if(confirm('Excluir?')) { db.splice(i, 1); localStorage.setItem('mer_db', JSON.stringify(db)); render(); }
-}
-
 function exportarBackup() {
-    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(db)])); a.download = 'backup.json'; a.click();
+    const blob = new Blob([JSON.stringify(db)], {type: 'application/json'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'meu_estoque.json'; a.click();
 }
 
-function importar(e) {
-    const reader = new FileReader(); reader.onload = (evt) => { db = JSON.parse(evt.target.result); localStorage.setItem('mer_db', JSON.stringify(db)); location.reload(); };
-    reader.readAsText(e.target.files[0]);
-}
+// Inicializar na view de estoque
+view('estoque');
