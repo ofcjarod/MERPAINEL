@@ -1,11 +1,37 @@
-:root { --bg:#050505; --card:#111; --ac:#fbbf24; --txt:#eee; --brd:#333; --err:#ef4444; }
+:root { 
+    --bg: #050505; --card: #111; --ac: #fbbf24; --txt: #eee; --brd: #333; 
+}
+
+/* Estrutura Base */
 body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--txt); margin: 0; }
-header { background: #000; padding: 20px 40px; display: flex; justify-content: space-between; border-bottom: 1px solid var(--brd); }
-main { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
-.card { background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid var(--brd); margin-bottom: 15px; }
-.alerta { border-left: 5px solid var(--err); }
-.btn-main { width: 100%; padding: 12px; background: var(--ac); color: #000; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; }
-.nav-btn { padding: 10px 15px; background: #222; color: #fff; border: 1px solid var(--brd); border-radius: 6px; cursor: pointer; }
-input, select { width: 100%; padding: 12px; margin: 8px 0; background: #000; border: 1px solid var(--brd); color: white; border-radius: 8px; }
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
-.btn-wa { display: inline-block; padding: 6px 10px; background: #25d366; color: white; border-radius: 4px; text-decoration: none; font-size: 11px; margin: 5px 5px 0 0; }
+
+/* Header e Navegação */
+header { 
+    background: #000; padding: 20px 40px; display: flex; 
+    justify-content: space-between; align-items: center; 
+    border-bottom: 1px solid var(--brd); 
+}
+.logo { font-weight: 800; color: var(--ac); font-size: 1.2rem; }
+nav { display: flex; gap: 10px; }
+
+/* Grid de Formulário (Corrigindo o layout da imagem) */
+.form-container { 
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; 
+    max-width: 800px; margin: 40px auto; background: var(--card); 
+    padding: 30px; border-radius: 12px; border: 1px solid var(--brd);
+}
+.form-container input:nth-child(n), .form-container select:nth-child(n) { margin: 0; }
+.full-width { grid-column: span 2; }
+
+/* Botões Padronizados */
+.btn-main { 
+    grid-column: span 2; padding: 15px; background: var(--ac); 
+    color: #000; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; 
+}
+.nav-btn { 
+    padding: 10px 20px; background: #222; color: #fff; 
+    border: 1px solid var(--brd); border-radius: 6px; cursor: pointer; 
+}
+
+/* Card Estoque */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; margin-top: 20px; }
