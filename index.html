@@ -2,83 +2,36 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>MeR Seminovos | CRM</title>
-    <style>
-        :root { --bg: #050505; --card: #111; --ac: #fbbf24; --txt: #eee; --brd: #333; --err: #f87171; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--txt); margin: 0; display: flex; }
-        aside { width: 260px; background: #000; border-right: 1px solid var(--brd); padding: 20px; display: flex; flex-direction: column; gap: 10px; }
-        main { flex: 1; padding: 40px; overflow: auto; }
-        .card { background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid var(--brd); margin-bottom: 15px; }
-        .btn { padding: 12px; cursor: pointer; background: #222; color: #fff; border: 1px solid var(--brd); border-radius: 6px; }
-        .btn:hover { background: var(--ac); color: #000; }
-        .btn-del { color: var(--err); border-color: var(--err); margin-top: 10px; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interface Ultra Otimizada</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
 </head>
 <body>
 
-<aside>
-    <img src="LOGOTIPO.png" style="width:100%" onerror="this.style.display='none'">
-    <button class="btn" onclick="switchView('view-cadastro')">➕ Novo Cadastro</button>
-    <button class="btn" onclick="switchView('view-estoque')">📦 Estoque</button>
-</aside>
+    <main class="container">
+        <header class="header">
+            <h1>Galeria de Alta Performance</h1>
+            <p>Renderização otimizada via hardware e JS assíncrono.</p>
+        </header>
 
-<main>
-    <div id="view-cadastro" class="view">
-        <div class="card">
-            <h2>Cadastro / Edição</h2>
-            <input type="text" id="mModelo" placeholder="Modelo">
-            <input type="text" id="mPlaca" placeholder="Placa">
-            <select id="mIpvaStatus"><option value="Pago">IPVA Pago</option><option value="Atrasado">IPVA Atrasado</option></select>
-            <input type="number" id="mValorIpva" placeholder="Valor IPVA R$">
-            <select id="mMultaStatus"><option value="Sem">Sem Multas</option><option value="Pendente">Multa Pendente</option></select>
-            <input type="number" id="mValorMulta" placeholder="Valor Multa R$">
-            <button class="btn" onclick="salvarVeiculo()">Salvar Veículo</button>
-        </div>
-    </div>
-    <div id="view-estoque" class="view" style="display:none">
-        <h2>Estoque Atual</h2>
-        <div id="lista"></div>
-    </div>
-</main>
+        <section class="grid" id="grid-produtos">
+            <article class="card">
+                <img src="https://picsum.photos/400/300" 
+                     alt="Exemplo Otimizado" 
+                     class="card__img" 
+                     loading="lazy" 
+                     width="400" 
+                     height="300">
+                <div class="card__content">
+                    <h2 class="card__title">Item Otimizado</h2>
+                    <p class="card__text">Este card usa transições aceleradas por GPU.</p>
+                    <button class="btn" data-action="click-efeito">Interagir</button>
+                </div>
+            </article>
+        </section>
+    </main>
 
-<script>
-    let db = JSON.parse(localStorage.getItem('mer_db') || '[]');
-
-    function switchView(id) {
-        document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
-        document.getElementById(id).style.display = 'block';
-        if(id === 'view-estoque') render();
-    }
-
-    function salvarVeiculo() {
-        const v = {
-            id: Date.now(),
-            modelo: document.getElementById('mModelo').value,
-            placa: document.getElementById('mPlaca').value.toUpperCase(),
-            ipva: { status: document.getElementById('mIpvaStatus').value, valor: document.getElementById('mValorIpva').value },
-            multa: { status: document.getElementById('mMultaStatus').value, valor: document.getElementById('mValorMulta').value }
-        };
-        db.push(v);
-        localStorage.setItem('mer_db', JSON.stringify(db));
-        alert('Veículo salvo!');
-        location.reload();
-    }
-
-    function render() {
-        document.getElementById('lista').innerHTML = db.map((v, i) => `
-            <div class="card">
-                <strong>${v.modelo}</strong> (${v.placa})<br>
-                IPVA: ${v.ipva.status} (R$${v.ipva.valor}) | Multa: ${v.multa.status} (R$${v.multa.valor})
-                <br><button class="btn btn-del" onclick="excluir(${i})">Excluir 🗑️</button>
-            </div>
-        `).join('');
-    }
-
-    function excluir(i) {
-        db.splice(i, 1);
-        localStorage.setItem('mer_db', JSON.stringify(db));
-        render();
-    }
-</script>
 </body>
 </html>
