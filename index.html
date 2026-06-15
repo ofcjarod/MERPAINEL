@@ -1,98 +1,96 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>MeR Seminovos CRM 🚀</title>
-    <style>
-        :root { --bg: #0a0a0a; --surface: #171717; --primary: #fbbf24; --text: #e5e5e5; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; display: flex; }
-        
-        /* Sidebar Minimalista */
-        aside { width: 260px; height: 100vh; background: #000; padding: 20px; border-right: 1px solid #333; }
-        .logo { font-size: 20px; font-weight: bold; margin-bottom: 40px; color: var(--primary); }
-        .nav-link { display: block; padding: 12px; margin-bottom: 10px; cursor: pointer; border-radius: 8px; transition: 0.3s; }
-        .nav-link:hover { background: var(--surface); }
-
-        /* Main Content */
-        main { flex: 1; padding: 40px; }
-        .card { background: var(--surface); padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #333; }
-        input, button { padding: 10px; border-radius: 6px; border: 1px solid #444; background: #000; color: #fff; margin: 5px 0; }
-        button { background: var(--primary); color: #000; font-weight: bold; cursor: pointer; border: none; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
-    </style>
+  <meta charset="UTF-8">
+  <title>MeR Seminovos | CRM Pro</title>
+  <style>
+    :root { --bg:#000; --card:#0a0a0a; --ac:#fbbf24; --txt:#e5e5e5; --brd:#262626; --err:#f87171; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--txt); display: flex; height: 100vh; margin: 0; }
+    
+    /* MENU MODERNO */
+    aside { width: 240px; background: #050505; border-right: 1px solid var(--brd); padding: 20px; display: flex; flex-direction: column; gap: 8px; }
+    .logo-box { padding-bottom: 20px; margin-bottom: 10px; }
+    .nav-item { padding: 12px; cursor: pointer; border-radius: 8px; transition: 0.3s; font-size: 14px; border: 1px solid transparent; }
+    .nav-item:hover { background: var(--brd); }
+    
+    /* ELEMENTOS */
+    main { flex: 1; padding: 40px; overflow: auto; }
+    .card { background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid var(--brd); margin-bottom: 20px; }
+    .select-modern { appearance: none; background: #111; color: var(--txt); padding: 12px; border-radius: 8px; border: 1px solid var(--brd); width: 100%; cursor: pointer; }
+    .btn { padding: 12px 20px; background: var(--ac); color: #000; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
+    .alerta { border-color: var(--err); }
+    #log-area { font-family: monospace; background: #000; color: #0f0; padding: 15px; border-radius: 8px; height: 150px; overflow: auto; font-size: 12px; }
+  </style>
 </head>
 <body>
 
 <aside>
-    <div class="logo">MeR Seminovos 🏎️</div>
-    <div class="nav-link" onclick="showView('cadastro')">➕ Novo Cadastro</div>
-    <div class="nav-link" onclick="showView('estoque')">📦 Estoque</div>
-    <div class="nav-link" onclick="triggerImport()">📥 Importar XML</div>
-    <input type="file" id="xmlInput" hidden accept=".xml">
+    <div class="logo-box"><img src="LOGOTIPO.png" style="width:100%" onerror="this.style.display='none'"></div>
+    <div class="nav-item" onclick="view('cadastro')">➕ Novo Cadastro</div>
+    <div class="nav-item" onclick="view('estoque')">📦 Estoque/Kanban</div>
+    <div class="nav-item" onclick="view('sistema')">⚠️ Relatório de Erros</div>
+    <hr style="border:0; border-top:1px solid #333; margin: 10px 0;">
+    <button class="btn" id="btnExportar">Exportar Backup</button>
 </aside>
 
 <main>
     <div id="cadastro" class="view">
         <div class="card">
-            <h2>Novo Veículo ✍️</h2>
-            <input type="text" id="modelo" placeholder="Modelo">
-            <input type="text" id="placa" placeholder="Placa">
-            <button onclick="salvar()">Cadastrar</button>
+            <h1>Cadastro Completo</h1>
+            <input type="text" id="mModelo" placeholder="Modelo">
+            <input type="text" id="mPlaca" placeholder="Placa">
+            <select id="mIpva" class="select-modern"><option value="Pago">IPVA Pago</option><option value="Atrasado">IPVA Atrasado</option></select>
+            <select id="mMulta" class="select-modern"><option value="Sem">Sem Multas</option><option value="Pendente">Multa Pendente</option></select>
+            <input type="number" id="mValor" placeholder="Valor Pendência R$">
+            <button class="btn" onclick="salvar()">Cadastrar</button>
         </div>
     </div>
-
-    <div id="estoque" class="view" style="display:none;">
-        <h1>Estoque Atual 📋</h1>
-        <div class="grid" id="lista"></div>
+    <div id="estoque" class="view" style="display:none">
+        <h1>Estoque</h1>
+        <div id="lista" style="display:grid; gap:15px"></div>
+    </div>
+    <div id="sistema" class="view" style="display:none">
+        <h1>Logs do Sistema</h1>
+        <div id="log-area"></div>
     </div>
 </main>
 
 <script>
     let db = JSON.parse(localStorage.getItem('mer_db') || '[]');
+    let logs = [];
 
-    function showView(id) {
+    function log(m) { logs.push(m); document.getElementById('log-area').innerHTML = logs.join('<br>'); }
+
+    function view(id) {
         document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
         document.getElementById(id).style.display = 'block';
         if(id === 'estoque') render();
     }
 
     function salvar() {
-        db.push({ modelo: document.getElementById('modelo').value, placa: document.getElementById('placa').value });
-        localStorage.setItem('mer_db', JSON.stringify(db));
-        alert('Cadastrado! ✅');
-        location.reload();
+        try {
+            const v = {
+                id: Date.now(),
+                modelo: document.getElementById('mModelo').value,
+                placa: document.getElementById('mPlaca').value,
+                ipva: document.getElementById('mIpva').value,
+                multa: document.getElementById('mMulta').value
+            };
+            db.push(v);
+            localStorage.setItem('mer_db', JSON.stringify(db));
+            log('Veículo ' + v.placa + ' salvo com sucesso.');
+            alert('Salvo!');
+        } catch(e) { log('ERRO: ' + e.message); }
     }
 
     function render() {
-        const div = document.getElementById('lista');
-        div.innerHTML = db.map((v, i) => `
-            <div class="card">
-                <h3>${v.modelo}</h3>
-                <p>Placa: ${v.placa}</p>
-                <button onclick="editar(${i})">Editar ✏️</button>
+        document.getElementById('lista').innerHTML = db.map(v => `
+            <div class="card ${(v.ipva === 'Atrasado' || v.multa === 'Pendente') ? 'alerta' : ''}">
+                <strong>${v.modelo}</strong> (${v.placa})<br>
+                Status: ${v.ipva} | ${v.multa}
             </div>
         `).join('');
     }
-
-    function triggerImport() { document.getElementById('xmlInput').click(); }
-
-    document.getElementById('xmlInput').onchange = (e) => {
-        const reader = new FileReader();
-        reader.onload = (evt) => {
-            const xml = new DOMParser().parseFromString(evt.target.result, "text/xml");
-            const veiculos = xml.getElementsByTagName("veiculo");
-            for(let v of veiculos) {
-                db.push({ 
-                    modelo: v.getElementsByTagName("modelo")[0].textContent,
-                    placa: v.getElementsByTagName("placa")[0].textContent 
-                });
-            }
-            localStorage.setItem('mer_db', JSON.stringify(db));
-            alert('XML Importado com sucesso! 📤');
-            location.reload();
-        };
-        reader.readAsText(e.target.files[0]);
-    };
 </script>
 </body>
 </html>
