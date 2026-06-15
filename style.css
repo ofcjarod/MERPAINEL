@@ -1,12 +1,19 @@
 :root { --bg:#050505; --card:#111; --ac:#fbbf24; --txt:#eee; --brd:#333; --err:#ef4444; }
-body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--txt); margin: 0; display: flex; height: 100vh; }
-aside { width: 260px; background: #000; border-right: 1px solid var(--brd); padding: 24px; display: flex; flex-direction: column; gap: 20px; }
-main { flex: 1; padding: 40px; overflow-y: auto; }
-.nav { cursor: pointer; color: #888; }
-.nav:hover { color: var(--ac); }
-.card { background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid var(--brd); }
+body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--txt); margin: 0; }
+
+header { background: #000; padding: 20px 40px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--brd); }
+.logo { font-weight: 800; color: var(--ac); font-size: 1.2rem; }
+nav { display: flex; gap: 15px; }
+
+main { padding: 40px; max-width: 1000px; margin: auto; }
+.card { background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid var(--brd); margin-bottom: 15px; }
 .alerta { border-left: 5px solid var(--err); }
+
+/* Botões Padronizados */
+.btn { padding: 12px 24px; background: var(--ac); color: #000; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; }
+.nav-btn { padding: 10px 20px; background: #222; color: #fff; border: 1px solid var(--brd); border-radius: 6px; cursor: pointer; }
+.nav-btn:hover { background: var(--ac); color: #000; }
+.btn-action { padding: 8px 12px; border-radius: 6px; border: 1px solid var(--brd); background: #222; color: #fff; cursor: pointer; margin-right: 5px; }
+
 input, select { width: 100%; padding: 12px; margin: 8px 0; background: #000; border: 1px solid var(--brd); color: white; border-radius: 8px; }
-.btn { width: 100%; padding: 12px; background: var(--ac); color: #000; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; margin-top: 10px; }
-.btn-wa { display: inline-block; padding: 8px; background: #25d366; color: white; border-radius: 6px; text-decoration: none; font-size: 12px; margin-top: 5px; }
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
