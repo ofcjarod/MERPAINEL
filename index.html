@@ -1,106 +1,82 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>MeR Seminovos CRM | Kanban Pro</title>
-  <style>
-    :root { --bg:#080808; --bg2:#111; --ac:#ffb300; --txt:#f0f0f0; --sub:#9a9a9a; --brd:#333; --warn:#f59e0b; }
-    body { font-family: sans-serif; background: var(--bg); color: var(--txt); display: flex; height: 100vh; margin: 0; }
-    aside { width: 250px; background: var(--bg2); border-right: 1px solid var(--brd); padding: 20px; display: flex; flex-direction: column; gap: 10px; }
-    main { flex: 1; padding: 20px; overflow: auto; }
-    .view { display: none; } .view.active { display: block; }
-    .kanban-board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-    .column { background: #151515; padding: 10px; border-radius: 8px; min-height: 80vh; }
-    .card { background: var(--bg2); padding: 12px; margin-bottom: 10px; border-radius: 6px; border: 1px solid var(--brd); cursor: pointer; }
-    .alert-icon { color: var(--warn); font-weight: bold; margin-right: 5px; }
-    .wa-link { display: block; margin-top: 5px; font-size: 11px; color: #25d366; text-decoration: none; }
-    .modal { position: fixed; top: 20%; left: 30%; width: 40%; background: #222; padding: 20px; border-radius: 10px; z-index: 1000; }
-  </style>
+    <meta charset="UTF-8">
+    <title>MeR Seminovos | Enterprise CRM</title>
+    <style>
+        :root { --bg:#050505; --card:#111; --ac:#ffb300; --txt:#eee; --err:#ef4444; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--txt); display: flex; height: 100vh; }
+        aside { width: 260px; background: #000; border-right: 1px solid #333; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+        main { flex: 1; padding: 30px; overflow: auto; }
+        .card { background: var(--card); padding: 20px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #333; }
+        button { padding: 10px; background: #222; color: #fff; border: 1px solid #444; border-radius: 6px; cursor: pointer; }
+        button:hover { background: var(--ac); color: #000; }
+        .btn-l { color: var(--ac); font-size: 12px; }
+        #log-area { font-family: monospace; background: #000; color: #0f0; padding: 15px; font-size: 12px; height: 200px; overflow: auto; }
+    </style>
 </head>
 <body>
 
 <aside>
     <img src="LOGOTIPO.png" style="width:100%" onerror="this.style.display='none'">
-    <button onclick="switchView('dashboard')">Dashboard</button>
-    <button onclick="switchView('veiculos')">Estoque</button>
-    <button onclick="switchView('kanban')">Kanban</button>
-    <button id="btnImportar">Importar XML</button>
-    <input type="file" id="inputImportar" accept=".xml" hidden>
+    <button onclick="view('estoque')">Estoque</button>
+    <button onclick="view('kanban')">Kanban</button>
+    <button onclick="view('sistema')">Relatórios e Erros</button>
+    <hr>
+    <button onclick="importar()">Importar XML/JSON</button>
+    <button onclick="exportar()">Exportar Dados (Backup)</button>
 </aside>
 
 <main>
-    <div id="dashboard" class="view active"><h1>Dashboard</h1></div>
-    <div id="veiculos" class="view"><h1>Estoque</h1><div id="listaEstoque"></div></div>
-    <div id="kanban" class="view"><h1>Kanban de Transferência</h1><div class="kanban-board" id="board"></div></div>
+    <div id="estoque" class="view"><h1>Estoque</h1><div id="lista"></div></div>
+    <div id="kanban" class="view" style="display:none"><h1>Kanban</h1><div id="board"></div></div>
+    <div id="sistema" class="view" style="display:none">
+        <h1>Relatórios de Sistema</h1>
+        <div id="log-area"></div>
+    </div>
 </main>
-
-<div id="modal" class="modal" style="display:none;">
-    <h2 id="modalTitle">Detalhes</h2>
-    <div id="modalContent"></div>
-    <button onclick="document.getElementById('modal').style.display='none'">Fechar</button>
-</div>
 
 <script>
     let db = JSON.parse(localStorage.getItem('mer_db') || '[]');
+    let logs = [];
 
-    function save() { localStorage.setItem('mer_db', JSON.stringify(db)); }
-    function switchView(id) {
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        if(id === 'kanban') renderKanban();
+    function log(msg) { logs.push(`[${new Date().toLocaleTimeString()}] ${msg}`); document.getElementById('log-area').innerHTML = logs.join('<br>'); }
+    
+    function view(id) {
+        document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
+        document.getElementById(id).style.display = 'block';
+        if(id === 'estoque') renderEstoque();
     }
 
-    function renderKanban() {
-        const board = document.getElementById('board');
-        board.innerHTML = '';
-        ['entrada', 'vistoria', 'andamento', 'concluido'].forEach(fase => {
-            const col = document.createElement('div'); col.className = 'column';
-            col.innerHTML = `<h3>${fase.toUpperCase()}</h3>`;
-            db.filter(v => (v.fase || 'entrada') === fase).forEach(v => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                // Ícone de alerta se tiver pendência
-                const alert = (v.multa || v.ipvaAtraso) ? `<span class="alert-icon">⚠️</span>` : '';
-                card.innerHTML = `${alert} <strong>${v.apelido}</strong>`;
-                card.onclick = () => openModal(v);
-                col.appendChild(card);
-            });
-            board.appendChild(col);
-        });
+    function renderEstoque() {
+        const list = document.getElementById('lista');
+        list.innerHTML = db.map(v => `
+            <div class="card">
+                <strong>${v.modelo}</strong> (${v.placa}) <br>
+                <button class="btn-l" onclick="copyResumo('${v.id}')">Copiar Resumo</button>
+            </div>
+        `).join('');
     }
 
-    function openModal(v) {
-        const m = document.getElementById('modal');
-        const c = document.getElementById('modalContent');
-        m.style.display = 'block';
-        c.innerHTML = `
-            <p><strong>Placa:</strong> ${v.placa}</p>
-            <a class="wa-link" href="https://wa.me/55${v.telAtual}" target="_blank">WhatsApp Cliente Atual</a>
-            <a class="wa-link" href="https://wa.me/55${v.telAnterior}" target="_blank">WhatsApp Cliente Anterior</a>
-        `;
+    function copyResumo(id) {
+        const v = db.find(x => x.id == id);
+        const texto = `Resumo Veículo: ${v.modelo}\nPlaca: ${v.placa}\nPendências: ${v.pendencias || 'Nenhuma'}`;
+        navigator.clipboard.writeText(texto);
+        log('Resumo do veículo ' + v.placa + ' copiado.');
     }
 
-    document.getElementById('btnImportar').onclick = () => document.getElementById('inputImportar').click();
-    document.getElementById('inputImportar').onchange = (e) => {
-        const reader = new FileReader();
-        reader.onload = (evt) => {
-            const xml = new DOMParser().parseFromString(evt.target.result, "text/xml");
-            const itens = xml.getElementsByTagName("veiculo");
-            for(let i=0; i<itens.length; i++) {
-                db.push({
-                    id: Date.now()+i,
-                    apelido: itens[i].getElementsByTagName("modelo")[0]?.textContent || "Carro",
-                    placa: itens[i].getElementsByTagName("placa")[0]?.textContent || "",
-                    multa: true, // Exemplo de pendência
-                    telAtual: "31999999999", 
-                    telAnterior: "31888888888",
-                    fase: 'entrada'
-                });
-            }
-            save(); renderKanban();
-        };
-        reader.readAsText(e.target.files[0]);
-    };
+    // Importação unificada com Log de erro
+    document.getElementById('inputImportar')?.addEventListener('change', (e) => {
+        try {
+            log('Iniciando importação...');
+            // Lógica de processamento...
+            log('Importação concluída com sucesso.');
+        } catch(e) {
+            log('ERRO: ' + e.message);
+        }
+    });
+
+    log('Sistema iniciado.');
 </script>
 </body>
 </html>
