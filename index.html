@@ -2,21 +2,20 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>MeR Seminovos | CRM</title>
+    <title>MeR Seminovos | CRM Pro</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header class="header">
-        <div class="logo">MeR Seminovos <span>CRM</span></div>
-        <nav class="nav-menu">
-            <button class="nav-btn" onclick="view('cadastro')">Novo Veículo</button>
-            <button class="nav-btn" onclick="view('estoque')">Estoque</button>
-            <button class="nav-btn" onclick="exportarBackup()">Exportar Dados</button>
-            <button class="nav-btn" onclick="document.getElementById('import').click()">Importar XML</button>
+    <header>
+        <div class="logo">MeR Seminovos CRM</div>
+        <nav>
+            <button class="nav-btn" onclick="view('cadastro')">➕ Novo Veículo</button>
+            <button class="nav-btn" onclick="view('estoque')">📦 Estoque</button>
+            <button class="nav-btn" onclick="exportarBackup()">💾 Exportar</button>
+            <button class="nav-btn" onclick="document.getElementById('import').click()">📥 Importar</button>
             <input type="file" id="import" hidden onchange="importarBackup(event)">
         </nav>
     </header>
-
     <main id="app">
         </main>
     <script src="script.js"></script>
