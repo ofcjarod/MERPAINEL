@@ -1,84 +1,120 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MeR Seminovos CRM</title>
-    <style>
-        /* RESET E VARIÁVEIS */
-        :root { --bg:#050505; --surface:#111; --accent:#ffb300; --text:#fff; --border:#333; }
-        body { margin: 0; font-family: sans-serif; background: var(--bg); color: var(--text); display: flex; }
-        
-        /* SIDEBAR */
-        nav { width: 250px; background: #000; border-right: 1px solid var(--border); height: 100vh; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
-        nav img { width: 100%; margin-bottom: 20px; }
-        .nav-btn { background: #222; color: #fff; border: 1px solid var(--border); padding: 12px; border-radius: 6px; cursor: pointer; text-align: left; }
-        .nav-btn:hover { background: var(--accent); color: #000; }
-
-        /* PAINEL */
-        main { flex: 1; padding: 40px; overflow-y: auto; }
-        .card { background: var(--surface); padding: 20px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 20px; }
-        input { width: 100%; padding: 10px; margin: 10px 0; background: #000; border: 1px solid var(--border); color: #fff; border-radius: 4px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-    </style>
+  <meta charset="UTF-8">
+  <title>MeR Seminovos | CRM Profissional</title>
+  <style>
+    :root { --bg:#050505; --card:#111; --ac:#ffb300; --txt:#eee; --brd:#333; --err:#ef4444; }
+    body { font-family: sans-serif; background: var(--bg); color: var(--txt); display: flex; height: 100vh; margin: 0; }
+    aside { width: 260px; background: #000; border-right: 1px solid var(--brd); padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+    main { flex: 1; padding: 40px; overflow: auto; }
+    .card { background: var(--card); padding: 20px; border-radius: 8px; border: 2px solid var(--brd); margin-bottom: 15px; position: relative; }
+    .card.alerta { border-color: var(--err); box-shadow: 0 0 10px rgba(239, 68, 68, 0.3); }
+    .btn { padding: 12px; cursor: pointer; background: #222; color: #fff; border: 1px solid var(--brd); border-radius: 6px; font-weight: bold; }
+    .btn:hover { background: var(--ac); color: #000; }
+    input, select { width: 100%; padding: 10px; margin: 5px 0 15px; background: #000; border: 1px solid var(--brd); color: white; border-radius: 4px; }
+    .section-title { color: var(--ac); border-bottom: 1px solid var(--brd); margin: 20px 0 10px; padding-bottom: 5px; }
+  </style>
 </head>
 <body>
 
-<nav>
-    <img src="LOGOTIPO.png" onerror="this.style.display='none'">
-    <button class="nav-btn" onclick="show('cadastro')">+ Cadastrar Veículo</button>
-    <button class="nav-btn" onclick="show('estoque')">Visualizar Estoque</button>
-    <button class="nav-btn" onclick="exportarBackup()">Backup JSON</button>
-</nav>
+<aside>
+    <img src="LOGOTIPO.png" style="width:100%" onerror="this.style.display='none'">
+    <button class="btn" onclick="switchView('view-cadastro')">+ Novo Veículo</button>
+    <button class="btn" onclick="switchView('view-estoque')">Kanban Estoque</button>
+    <hr style="border:0; border-top:1px solid #333; margin: 10px 0;">
+    <button class="btn" id="btnExportar">Exportar Backup (.json)</button>
+    <button class="btn" id="btnImportar">Importar Dados</button>
+    <input type="file" id="inputImportar" hidden>
+</aside>
 
-<main>
-    <div id="cadastro" class="view">
+<main id="main">
+    <div id="view-cadastro" class="view active">
+        <h1>Cadastro de Veículo</h1>
         <div class="card">
-            <h1>Cadastro de Veículo</h1>
-            <input type="text" id="mModelo" placeholder="Modelo">
-            <input type="text" id="mPlaca" placeholder="Placa">
-            <button class="nav-btn" onclick="salvar()">Salvar no Pátio</button>
+            <h2 class="section-title">Dados Básicos</h2>
+            <input type="text" id="cModelo" placeholder="Modelo">
+            <input type="text" id="cPlaca" placeholder="Placa">
+            <input type="text" id="cChassi" placeholder="Chassi">
+            <input type="text" id="cRenavam" placeholder="Renavam">
+
+            <h2 class="section-title">IPVA</h2>
+            <select id="cIpvaStatus"><option value="Pago">IPVA Pago</option><option value="Atrasado">IPVA Atrasado</option></select>
+            <select id="cIpvaParcela"><option value="1/3">1/3</option><option value="2/3">2/3</option><option value="3/3">3/3</option></select>
+            <input type="number" id="cIpvaValor" placeholder="Valor do IPVA R$">
+
+            <h2 class="section-title">Multas</h2>
+            <select id="cMultaStatus"><option value="Sem Multas">Sem Multas</option><option value="Com Multas">Com Multas</option></select>
+            <input type="number" id="cMultaValor" placeholder="Valor Total Multas R$">
+            
+            <button class="btn" onclick="salvarVeiculo()">Cadastrar Veículo</button>
         </div>
     </div>
-    <div id="estoque" class="view" style="display:none;">
-        <h1>Estoques</h1>
-        <div class="grid" id="lista"></div>
+
+    <div id="view-estoque" class="view" style="display:none;">
+        <h1>Kanban do Estoque</h1>
+        <div id="listaEstoque" style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 15px;"></div>
     </div>
 </main>
 
 <script>
-    let db = JSON.parse(localStorage.getItem('crm_data') || '[]');
+    let db = JSON.parse(localStorage.getItem('mer_db') || '[]');
 
-    function show(id) {
+    function switchView(id) {
         document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
         document.getElementById(id).style.display = 'block';
-        if(id === 'estoque') render();
+        if(id === 'view-estoque') renderEstoque();
     }
 
-    function salvar() {
+    function salvarVeiculo() {
         const v = {
             id: Date.now(),
-            modelo: document.getElementById('mModelo').value,
-            placa: document.getElementById('mPlaca').value
+            modelo: document.getElementById('cModelo').value,
+            placa: document.getElementById('cPlaca').value.toUpperCase(),
+            chassi: document.getElementById('cChassi').value,
+            renavam: document.getElementById('cRenavam').value,
+            ipva: { status: document.getElementById('cIpvaStatus').value, parcela: document.getElementById('cIpvaParcela').value, valor: document.getElementById('cIpvaValor').value },
+            multa: { status: document.getElementById('cMultaStatus').value, valor: document.getElementById('cMultaValor').value }
         };
-        db.push(v);
-        localStorage.setItem('crm_data', JSON.stringify(db));
-        alert('Cadastro realizado!');
+        
+        const idx = db.findIndex(x => x.placa === v.placa);
+        if(idx > -1) db[idx] = v; else db.push(v);
+        
+        localStorage.setItem('mer_db', JSON.stringify(db));
+        alert('Dados salvos!');
         location.reload();
     }
 
-    function render() {
-        document.getElementById('lista').innerHTML = db.map(v => 
-            `<div class="card"><strong>${v.modelo}</strong><br>Placa: ${v.placa}</div>`
-        ).join('');
+    function renderEstoque() {
+        const div = document.getElementById('listaEstoque');
+        div.innerHTML = db.map(v => {
+            const hasAlert = v.ipva.status === 'Atrasado' || v.multa.status === 'Com Multas';
+            return `
+                <div class="card ${hasAlert ? 'alerta' : ''}">
+                    <strong>${v.modelo}</strong><br>
+                    Placa: ${v.placa}<br>
+                    ${hasAlert ? '⚠️ Pendência Financeira' : '✅ Tudo OK'}
+                </div>
+            `;
+        }).join('');
     }
 
-    function exportarBackup() {
+    document.getElementById('btnExportar').onclick = () => {
         const a = document.createElement('a');
-        a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
-        a.download = "backup.json";
-        a.click();
-    }
+        a.href = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(db));
+        a.download = 'backup_crm.json'; a.click();
+    };
+
+    document.getElementById('btnImportar').onclick = () => document.getElementById('inputImportar').click();
+    document.getElementById('inputImportar').onchange = (e) => {
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+            db = JSON.parse(evt.target.result);
+            localStorage.setItem('mer_db', JSON.stringify(db));
+            location.reload();
+        };
+        reader.readAsText(e.target.files[0]);
+    };
 </script>
 </body>
 </html>
