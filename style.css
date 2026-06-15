@@ -1,15 +1,12 @@
+:root { --bg:#050505; --card:#111; --ac:#fbbf24; --txt:#eee; --brd:#333; --err:#ef4444; }
 * { box-sizing: border-box; }
-:root { --bg: #050505; --surface: #111; --accent: #fbbf24; --text: #eee; --brd: #333; }
-body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; }
-
+body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--txt); margin: 0; }
 header { background: #000; padding: 20px 40px; display: flex; justify-content: space-between; border-bottom: 1px solid var(--brd); }
-.logo { font-weight: 800; color: var(--accent); }
-nav { display: flex; gap: 10px; }
-
-main { max-width: 900px; margin: 40px auto; padding: 0 20px; }
-.card { background: var(--surface); padding: 25px; border-radius: 12px; border: 1px solid var(--brd); }
+main { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
+.card { background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid var(--brd); margin-bottom: 15px; }
+.alerta { border-left: 5px solid var(--err); }
+.btn-main { width: 100%; padding: 12px; background: var(--ac); color: #000; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; }
+.nav-btn { padding: 10px 15px; background: #222; color: #fff; border: 1px solid var(--brd); border-radius: 6px; cursor: pointer; }
+input, select { width: 100%; padding: 12px; margin: 8px 0; background: #000; border: 1px solid var(--brd); color: white; border-radius: 8px; }
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
-
-input, select { width: 100%; padding: 12px; margin: 8px 0; background: #000; border: 1px solid var(--brd); color: #fff; border-radius: 8px; }
-.btn-main { background: var(--accent); color: #000; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: 700; cursor: pointer; }
-.nav-btn { background: #222; color: #fff; border: 1px solid var(--brd); padding: 10px 18px; border-radius: 6px; cursor: pointer; }
+.btn-wa { display: inline-block; padding: 6px 10px; background: #25d366; color: white; border-radius: 4px; text-decoration: none; font-size: 11px; margin: 5px 5px 0 0; }
