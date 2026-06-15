@@ -1,82 +1,99 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>MeR Seminovos | Enterprise CRM</title>
-    <style>
-        :root { --bg:#050505; --card:#111; --ac:#ffb300; --txt:#eee; --err:#ef4444; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--txt); display: flex; height: 100vh; }
-        aside { width: 260px; background: #000; border-right: 1px solid #333; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
-        main { flex: 1; padding: 30px; overflow: auto; }
-        .card { background: var(--card); padding: 20px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #333; }
-        button { padding: 10px; background: #222; color: #fff; border: 1px solid #444; border-radius: 6px; cursor: pointer; }
-        button:hover { background: var(--ac); color: #000; }
-        .btn-l { color: var(--ac); font-size: 12px; }
-        #log-area { font-family: monospace; background: #000; color: #0f0; padding: 15px; font-size: 12px; height: 200px; overflow: auto; }
-    </style>
+  <meta charset="UTF-8">
+  <title>MeR Seminovos | CRM</title>
+  <style>
+    :root { --bg:#050505; --card:#111; --ac:#ffb300; --txt:#eee; --brd:#333; }
+    body { font-family: sans-serif; background: var(--bg); color: var(--txt); display: flex; height: 100vh; margin: 0; }
+    aside { width: 260px; background: #000; border-right: 1px solid var(--brd); padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+    main { flex: 1; padding: 40px; overflow: auto; }
+    .card { background: var(--card); padding: 20px; border-radius: 8px; border: 1px solid var(--brd); margin-bottom: 20px; }
+    .btn { padding: 12px; cursor: pointer; background: #222; color: #fff; border: 1px solid var(--brd); border-radius: 6px; }
+    .btn:hover { background: var(--ac); color: #000; }
+    input { width: 100%; padding: 8px; margin: 5px 0 15px; background: #222; border: 1px solid var(--brd); color: white; border-radius: 4px; }
+  </style>
 </head>
 <body>
 
 <aside>
     <img src="LOGOTIPO.png" style="width:100%" onerror="this.style.display='none'">
-    <button onclick="view('estoque')">Estoque</button>
-    <button onclick="view('kanban')">Kanban</button>
-    <button onclick="view('sistema')">Relatórios e Erros</button>
-    <hr>
-    <button onclick="importar()">Importar XML/JSON</button>
-    <button onclick="exportar()">Exportar Dados (Backup)</button>
+    <button class="btn" onclick="switchView('view-cadastro')">+ Cadastro de Veículo</button>
+    <button class="btn" onclick="switchView('view-estoque')">Ver Estoque</button>
+    <hr style="border:0; border-top:1px solid #333; margin: 10px 0;">
+    <button class="btn" id="btnImportar">Importar Dados (JSON)</button>
+    <button class="btn" id="btnExportar">Backup (JSON)</button>
+    <input type="file" id="inputImportar" hidden accept=".json">
 </aside>
 
 <main>
-    <div id="estoque" class="view"><h1>Estoque</h1><div id="lista"></div></div>
-    <div id="kanban" class="view" style="display:none"><h1>Kanban</h1><div id="board"></div></div>
-    <div id="sistema" class="view" style="display:none">
-        <h1>Relatórios de Sistema</h1>
-        <div id="log-area"></div>
+    <div id="view-cadastro" class="view">
+        <div class="card">
+            <h1>Cadastro de Veículo</h1>
+            <input type="text" id="cModelo" placeholder="Modelo do Veículo">
+            <input type="text" id="cPlaca" placeholder="Placa">
+            <input type="text" id="cRenavam" placeholder="Renavam">
+            <input type="text" id="cIpva" placeholder="IPVA (ex: Pago/Pendente)">
+            <input type="text" id="cMultas" placeholder="Multas">
+            <button class="btn" onclick="salvarVeiculo()">Cadastrar no Sistema</button>
+        </div>
+    </div>
+
+    <div id="view-estoque" class="view" style="display:none;">
+        <h1>Estoque Atual</h1>
+        <div id="listaEstoque"></div>
     </div>
 </main>
 
 <script>
-    let db = JSON.parse(localStorage.getItem('mer_db') || '[]');
-    let logs = [];
+    let db = JSON.parse(localStorage.getItem('mer_estoque') || '[]');
 
-    function log(msg) { logs.push(`[${new Date().toLocaleTimeString()}] ${msg}`); document.getElementById('log-area').innerHTML = logs.join('<br>'); }
-    
-    function view(id) {
+    function switchView(id) {
         document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
         document.getElementById(id).style.display = 'block';
-        if(id === 'estoque') renderEstoque();
+        if(id === 'view-estoque') renderEstoque();
+    }
+
+    function salvarVeiculo() {
+        const v = {
+            id: Date.now(),
+            modelo: document.getElementById('cModelo').value,
+            placa: document.getElementById('cPlaca').value,
+            renavam: document.getElementById('cRenavam').value,
+            ipva: document.getElementById('cIpva').value,
+            multas: document.getElementById('cMultas').value
+        };
+        db.push(v);
+        localStorage.setItem('mer_estoque', JSON.stringify(db));
+        alert('Veículo cadastrado!');
+        location.reload();
     }
 
     function renderEstoque() {
-        const list = document.getElementById('lista');
-        list.innerHTML = db.map(v => `
-            <div class="card">
-                <strong>${v.modelo}</strong> (${v.placa}) <br>
-                <button class="btn-l" onclick="copyResumo('${v.id}')">Copiar Resumo</button>
-            </div>
-        `).join('');
+        const div = document.getElementById('listaEstoque');
+        div.innerHTML = db.map(v => `<div class="card">${v.modelo} | Placa: ${v.placa} | IPVA: ${v.ipva}</div>`).join('');
     }
 
-    function copyResumo(id) {
-        const v = db.find(x => x.id == id);
-        const texto = `Resumo Veículo: ${v.modelo}\nPlaca: ${v.placa}\nPendências: ${v.pendencias || 'Nenhuma'}`;
-        navigator.clipboard.writeText(texto);
-        log('Resumo do veículo ' + v.placa + ' copiado.');
-    }
+    // BOTÃO EXPORTAR CORRIGIDO
+    document.getElementById('btnExportar').onclick = () => {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
+        const a = document.createElement('a');
+        a.href = dataStr;
+        a.download = "backup_crm.json";
+        a.click();
+    };
 
-    // Importação unificada com Log de erro
-    document.getElementById('inputImportar')?.addEventListener('change', (e) => {
-        try {
-            log('Iniciando importação...');
-            // Lógica de processamento...
-            log('Importação concluída com sucesso.');
-        } catch(e) {
-            log('ERRO: ' + e.message);
-        }
-    });
-
-    log('Sistema iniciado.');
+    // BOTÃO IMPORTAR CORRIGIDO
+    document.getElementById('btnImportar').onclick = () => document.getElementById('inputImportar').click();
+    document.getElementById('inputImportar').onchange = (e) => {
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+            db = JSON.parse(evt.target.result);
+            localStorage.setItem('mer_estoque', JSON.stringify(db));
+            location.reload();
+        };
+        reader.readAsText(e.target.files[0]);
+    };
 </script>
 </body>
 </html>
