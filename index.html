@@ -2,48 +2,60 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>MeR Seminovos | CRM Pro</title>
+  <title>MeR Seminovos | CRM Profissional</title>
   <style>
-    :root { --bg:#050505; --card:#111; --ac:#ffb300; --txt:#eee; --brd:#333; --error:#ef4444; }
-    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--txt); display: flex; height: 100vh; margin: 0; }
+    :root { --bg:#050505; --card:#111; --ac:#ffb300; --txt:#eee; --brd:#333; --err:#ef4444; }
+    body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--txt); display: flex; height: 100vh; margin: 0; }
+    
+    /* Layout */
     aside { width: 260px; background: #000; border-right: 1px solid var(--brd); padding: 20px; display: flex; flex-direction: column; gap: 10px; }
-    main { flex: 1; padding: 30px; overflow: auto; }
-    .card { background: var(--card); padding: 20px; border-radius: 12px; margin-bottom: 15px; border: 2px solid #333; transition: 0.3s; }
-    /* A classe de alerta que você pediu */
-    .card.alerta { border-color: var(--error); box-shadow: 0 0 10px rgba(239, 68, 68, 0.4); }
-    button { padding: 12px; cursor: pointer; background: #222; color: #fff; border: 1px solid var(--brd); border-radius: 6px; }
-    button:hover { background: var(--ac); color: #000; }
-    .tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: #333; }
+    main { flex: 1; padding: 40px; overflow: auto; }
+    
+    /* Logo */
+    .logo-container { margin-bottom: 30px; text-align: center; }
+    .logo-container img { width: 150px; height: auto; border-radius: 8px; }
+
+    /* UI Components */
+    .view { display: none; }
+    .view.active { display: block; }
+    .card { background: var(--card); padding: 20px; border-radius: 12px; margin-bottom: 15px; border: 1px solid var(--brd); }
+    .btn { padding: 12px; cursor: pointer; background: #222; color: #fff; border: 1px solid var(--brd); border-radius: 6px; font-weight: bold; }
+    .btn:hover { background: var(--ac); color: #000; }
+    
+    input { width: 100%; padding: 10px; margin: 5px 0 15px; background: #222; border: 1px solid var(--brd); color: white; border-radius: 4px; }
   </style>
 </head>
 <body>
 
 <aside>
-    <img src="LOGOTIPO.png" style="width:100%" onerror="this.style.display='none'">
-    <button onclick="switchView('view-cadastro')">+ Cadastrar Veículo</button>
-    <button onclick="switchView('view-estoque')">Visualizar Estoque</button>
+    <div class="logo-container">
+        <img src="LOGOTIPO.png" alt="Logo MeR Seminovos">
+    </div>
+    <button class="btn" onclick="switchView('view-cadastro')">+ Cadastro</button>
+    <button class="btn" onclick="switchView('view-estoque')">Estoque</button>
+    <hr style="border:0; border-top:1px solid #333; margin: 10px 0;">
+    <button class="btn" id="btnImportar">Importar XML/JSON</button>
+    <button class="btn" id="btnExportar">Exportar Backup</button>
+    <input type="file" id="inputImportar" hidden accept=".xml,.json">
 </aside>
 
 <main>
     <div id="view-cadastro" class="view active">
-        <h1>Cadastro de Veículo</h1>
+        <h1>Cadastrar Veículo</h1>
         <div class="card">
-            <input type="text" id="cModelo" placeholder="Modelo"><br>
-            <input type="text" id="cPlaca" placeholder="Placa"><br>
-            <label><input type="checkbox" id="cIpva"> IPVA em Atraso</label><br>
-            <label><input type="checkbox" id="cMultas"> Possui Multas</label><br>
-            <button class="btn" onclick="salvarVeiculo()">Confirmar Cadastro</button>
+            <input type="text" id="cModelo" placeholder="Modelo">
+            <input type="text" id="cPlaca" placeholder="Placa (Ex: ABC-1234)">
+            <button class="btn" onclick="salvarVeiculo()">Salvar Veículo</button>
         </div>
     </div>
-
     <div id="view-estoque" class="view" style="display:none;">
-        <h1>Estoques e Pendências</h1>
+        <h1>Estoques</h1>
         <div id="listaEstoque"></div>
     </div>
 </main>
 
 <script>
-    let db = JSON.parse(localStorage.getItem('mer_estoque') || '[]');
+    let db = JSON.parse(localStorage.getItem('mer_db') || '[]');
 
     function switchView(id) {
         document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
@@ -51,33 +63,60 @@
         if(id === 'view-estoque') renderEstoque();
     }
 
-    function salvarVeiculo() {
-        const v = {
-            id: Date.now(),
-            modelo: document.getElementById('cModelo').value,
-            placa: document.getElementById('cPlaca').value,
-            ipvaPendente: document.getElementById('cIpva').checked,
-            multaPendente: document.getElementById('cMultas').checked
+    function salvarVeiculo(dados) {
+        // Anti-Duplicidade: Procura placa
+        const placa = (dados.placa || document.getElementById('cPlaca').value).toUpperCase().trim();
+        const index = db.findIndex(v => v.placa.toUpperCase() === placa);
+        
+        const novo = {
+            id: index > -1 ? db[index].id : Date.now(),
+            modelo: dados.modelo || document.getElementById('cModelo').value,
+            placa: placa
         };
-        db.push(v);
-        localStorage.setItem('mer_estoque', JSON.stringify(db));
-        alert('Veículo salvo com alerta de pendência se selecionado!');
-        location.reload();
+
+        if(index > -1) db[index] = novo; // Unifica
+        else db.push(novo); // Cria novo
+        
+        localStorage.setItem('mer_db', JSON.stringify(db));
+        if(!dados.placa) { alert('Veículo salvo!'); location.reload(); }
     }
 
     function renderEstoque() {
-        const div = document.getElementById('listaEstoque');
-        div.innerHTML = db.map(v => {
-            // A LÓGICA DO ALERTA:
-            const temPendencia = v.ipvaPendente || v.multaPendente;
-            return `
-                <div class="card ${temPendencia ? 'alerta' : ''}">
-                    <strong>${v.modelo}</strong> (${v.placa})
-                    ${temPendencia ? '<span style="color:var(--error); margin-left:10px;">⚠️ PENDENTE</span>' : '<span style="color:var(--ok); margin-left:10px;">✅ EM DIA</span>'}
-                </div>
-            `;
-        }).join('');
+        document.getElementById('listaEstoque').innerHTML = db.map(v => 
+            `<div class="card"><strong>${v.modelo}</strong> | Placa: ${v.placa}</div>`
+        ).join('');
     }
+
+    // Exportação
+    document.getElementById('btnExportar').onclick = () => {
+        const a = document.createElement('a');
+        a.href = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(db));
+        a.download = 'backup_crm.json'; a.click();
+    };
+
+    // Importação
+    document.getElementById('btnImportar').onclick = () => document.getElementById('inputImportar').click();
+    document.getElementById('inputImportar').onchange = (e) => {
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+            const file = e.target.files[0];
+            if(file.name.endsWith('.xml')) {
+                const xml = new DOMParser().parseFromString(evt.target.result, "text/xml");
+                const itens = xml.getElementsByTagName("veiculo");
+                for(let v of itens) {
+                    salvarVeiculo({
+                        modelo: v.getElementsByTagName("modelo")[0]?.textContent,
+                        placa: v.getElementsByTagName("placa")[0]?.textContent
+                    });
+                }
+            } else {
+                db = JSON.parse(evt.target.result);
+                localStorage.setItem('mer_db', JSON.stringify(db));
+            }
+            location.reload();
+        };
+        reader.readAsText(file);
+    };
 </script>
 </body>
 </html>
